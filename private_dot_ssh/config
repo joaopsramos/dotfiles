@@ -1,0 +1,14 @@
+Host *
+  IgnoreUnknown UseKeychain
+  UseKeychain yes
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519
+
+Host x-bastion
+  HostName 52.14.136.218
+  User openvpnas
+  Port 22
+  IdentityFile ~/.ssh/id_ed25519
+
+  # kibana (io-logs)
+  LocalForward 35601 ip-172-31-2-41.us-east-2.compute.internal:5601
