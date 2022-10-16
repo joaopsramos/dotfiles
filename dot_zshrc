@@ -74,7 +74,6 @@ plugins=(
   git
   asdf
   docker
-  git-flow-completion
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -113,7 +112,6 @@ SPACESHIP_PROMPT_ORDER=(
   hg            # Mercurial section (hg_branch  + hg_status)
   exec_time     # Execution time
   line_sep      # Line break
-  vi_mode       # Vi-mode indicator
   jobs          # Background jobs indicator
   exit_code     # Exit code section
   char          # Prompt character
@@ -141,8 +139,12 @@ zinit light zsh-users/zsh-autosuggestions
 zinit light zsh-users/zsh-completions
 
 # -------------------
-alias cfgnv="cd ~/.config/nvim && nvim"
-
 export ERL_AFLAGS="-kernel shell_history enabled"
 export FIREBASE_FCM_KEY=AIzaSyCfjAZ1p70HUhbCq006bnAwxgEO6nP4Bag
 PATH="$HOME/.local/bin:$PATH"
+
+alias cfgnv="cd ~/.config/nvim && nvim"
+alias pacs="sudo pacman -S"
+alias pacup="sudo pacman -Syu"
+alias pacf="pacman -Ss"
+alias pacq="pacman -Q"
