@@ -130,7 +130,7 @@ bindsym $mod+Return exec ~/.local/bin/kitty
 bindsym $mod+q kill
 
 # exit-menu
-bindsym $mod+Ctrl+q exec ~/.config/i3/scripts/powermenu
+bindsym $mod+Ctrl+q exec ~/.config/rofi/powermenu/type-1/powermenu.sh
 
 # Lock the system
 # lock with a picture:
@@ -177,7 +177,7 @@ bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
-bindsym $mod+g layout tabbed
+bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
@@ -206,24 +206,20 @@ bindsym $mod+XF86AudioLowerVolume exec amixer -D pulse sset Master 1%- && pkill 
 bindsym XF86AudioMute exec amixer sset Master toggle && killall -USR1 i3blocks
 
 # audio control
-bindsym XF86AudioPlay exec playerctl play
-bindsym XF86AudioPause exec playerctl pause
+bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 
 # Redirect sound to headphones
-bindsym $mod+p exec /usr/local/bin/switch-audio-port
+bindsym $mod+p exec flameshot gui
 
 ## App shortcuts
 bindsym $mod+n exec /usr/bin/thunar
-bindsym Print exec scrot ~/%Y-%m-%d-%T-screenshot.png && notify-send "Screenshot saved to ~/$(date +"%Y-%m-%d-%T")-screenshot.png"
 
 # Power Profiles menu switcher (rofi)
 bindsym $mod+Ctrl+p exec ~/.config/i3/scripts/power-profiles
 
 bindsym $mod+Ctrl+m exec pavucontrol -t 3
-
-##########################################
 # configuration for workspace behaviour: #
 ##########################################
 
@@ -492,8 +488,10 @@ client.urgent		    	$urgentred	$urgentred	$white		$yellowbrown	$yellowbrown
 
 ## rofi bindings fancy application menu ($mod+d /F9 optional disabled)
 
-bindsym $mod+d exec rofi -modi drun -show drun \
-		-config ~/.config/rofi/rofidmenu.rasi
+# bindsym $mod+d exec rofi -modi drun -show drun \
+# 		-config ~/.config/rofi/rofidmenu.rasi
+
+bindsym $mod+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
 
 #bindsym F9 exec rofi -modi drun -show drun \
 #		-config ~/.config/rofi/rofidmenu.rasi
@@ -513,3 +511,5 @@ bindsym $mod+t exec rofi -show window \
 #		-config ~/.config/rofi/rofidmenu.rasi
 
 exec_always --no-startup-id ~/.config/polybar/launch.sh
+
+exec --no-startup-id i3-msg "workspace 1"
