@@ -62,10 +62,10 @@ gaps inner 6
 gaps outer 3
 
 # show window title bars (not officially supported with i3gaps)
-#default_border normal
+# default_border normal
 
 # window title alignment
-#title_align center
+title_align center
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -124,7 +124,7 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # start a terminal
-bindsym $mod+Return exec ~/.local/bin/kitty
+bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+q kill
@@ -251,12 +251,13 @@ workspace $ws9 output DP-1
 workspace $ws10 output DP-1
 
 # bind program to workspace and focus to them on startup:
-assign [class="Spotify"] $ws3
+assign [class="discord"] $ws6
 
 # automatic set focus new window if it opens on another workspace then the current:
 for_window [class=Thunar] focus
 for_window [class=Thunderbird] focus
 for_window [class=TelegramDesktop] focus
+for_window [class="Spotify"] move --no-auto-back-and-forth container to workspace $ws2
 
 ##############
 # compositor #
