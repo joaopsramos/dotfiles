@@ -22,7 +22,7 @@
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango: Hack Nerd Font Mono 10
+font pango: Hack Nerd Font Mono 0
 
 # set the mod key to the winkey:
 set $mod Mod4
@@ -52,7 +52,7 @@ workspace_layout default
 ##############################
 
 #border indicator on windows:
-new_window pixel 1
+# new_window pixel 1
 
 # thin borders
 # hide_edge_borders both
@@ -284,13 +284,14 @@ for_window [class="Spotify"] move --no-auto-back-and-forth container to workspac
 # manpage: https://man.archlinux.org/man/picom.1.en
 # The default configuration is available in /etc/xdg/picom.conf 
 # For modifications, it can be copied to ~/.config/picom/picom.conf or ~/.config/picom.conf
-#
 # using default config 
 # exec_always --no-startup-id picom -b
 #
 # for custom config:
 # exec_always --no-startup-id picom --config  ~/.config/picom/picom.conf --experimental-backends
 exec_always --no-startup-id picom --animations --animation-window-mass 0.5 --animation-for-open-window zoom --animation-stiffness 300 --config  ~/.config/picom/picom.conf --experimental-backends
+
+exec --no-startup-id ~/.config/xborder/xborders --config ~/.config/xborder.json
 
 #############################################
 # autostart applications/services on login: #
@@ -408,7 +409,7 @@ set $transparent #ffffff00
 set $darkbluetrans	#08052be6
 set $blue #3d59a1
 set $darkblue		#08052b
-set $lightblue		#5294e2
+set $lightblue		#08052b00
 set $urgentred		#e53935
 set $white		#ffffff
 set $black		#000000
