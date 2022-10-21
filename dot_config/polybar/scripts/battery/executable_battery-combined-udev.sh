@@ -12,7 +12,7 @@ battery_print() {
     battery_max_1=0
 
     if [ ! -f "$PATH_BATTERY_0/energy_now" ]; then
-        exit
+        return
     fi
 
     if [ $(cat "$PATH_BATTERY_0/status") == "Charging" ]; then
@@ -82,6 +82,10 @@ case "$1" in
         trap exit INT
         trap "echo" USR1
 
-        battery_print
-        ;;
+        while true; do
+            battery_print
+
+            sleep 30 &
+            wait
+        done;
 esac
