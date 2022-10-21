@@ -58,7 +58,7 @@ new_window pixel 1
 # hide_edge_borders both
 
 # Set inner/outer gaps
-gaps inner 6
+gaps inner 12
 gaps outer 3
 
 # show window title bars (not officially supported with i3gaps)
@@ -137,6 +137,8 @@ bindsym $mod+Ctrl+q exec ~/.config/rofi/powermenu/type-1/powermenu.sh
 #bindsym $mod+l exec i3lock -i  ~/.config/i3/i3-lock-screen.png -p default|win -t
 # lock by blurring the screen:
 # bindsym $mod+l exec ~/.config/i3/scripts/blur-lock
+
+bindsym $mod+o exec betterlockscreen --lock dim
 
 # reload the configuration file
 bindsym $mod+Ctrl+c reload
@@ -253,6 +255,8 @@ workspace $ws10 output DP-1
 # bind program to workspace and focus to them on startup:
 assign [class="discord"] $ws6
 
+for_window [class=".*"] border none
+
 # automatic set focus new window if it opens on another workspace then the current:
 for_window [class=Thunar] focus
 for_window [class=Thunderbird] focus
@@ -285,7 +289,8 @@ for_window [class="Spotify"] move --no-auto-back-and-forth container to workspac
 # exec_always --no-startup-id picom -b
 #
 # for custom config:
-exec_always --no-startup-id picom --config  ~/.config/picom.conf
+# exec_always --no-startup-id picom --config  ~/.config/picom/picom.conf --experimental-backends
+exec_always --no-startup-id picom --animations --animation-window-mass 0.5 --animation-for-open-window zoom --animation-stiffness 300 --config  ~/.config/picom/picom.conf --experimental-backends
 
 #############################################
 # autostart applications/services on login: #
@@ -399,7 +404,9 @@ for_window [class="urxvt"] border pixel 1
 ######################################
 
 # Define colors variables:
+set $transparent #ffffff00
 set $darkbluetrans	#08052be6
+set $blue #3d59a1
 set $darkblue		#08052b
 set $lightblue		#5294e2
 set $urgentred		#e53935
@@ -412,11 +419,11 @@ set $mediumgrey		#8b8b8b
 set $yellowbrown	#e1b700
 
 # define colors for windows:
-#class		        	border		bground		text		indicator	child_border
-client.focused		    	$lightblue	$darkblue	$white		$mediumgrey	$mediumgrey
-client.unfocused	    	$darkblue	$darkblue	$grey		$darkgrey	$darkgrey
-client.focused_inactive		$darkblue	$darkblue	$grey		$black		$black
-client.urgent		    	$urgentred	$urgentred	$white		$yellowbrown	$yellowbrown
+#class									border			bground			text		indicator			child_border
+client.focused		    	$lightblue	$darkblue		$white	$mediumgrey		$blue
+client.unfocused	    	$transparent		$transparent		$transparent		$transparent			$transparent
+client.focused_inactive	$darkblue		$darkblue		$grey		$black				$black
+client.urgent						$urgentred	$urgentred	$white	$yellowbrown	$yellowbrown
 
 ############################################
 # bar settings (input comes from i3blocks) #
