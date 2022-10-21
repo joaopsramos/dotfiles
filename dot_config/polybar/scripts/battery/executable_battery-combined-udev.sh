@@ -82,11 +82,6 @@ case "$1" in
         trap exit INT
         trap "echo" USR1
 
-        while true; do
-            battery_print
-
-            sleep 30 &
-            wait
-        done
+        battery_print
         ;;
 esac
