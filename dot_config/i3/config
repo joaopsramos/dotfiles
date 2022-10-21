@@ -191,6 +191,9 @@ bindsym $mod+space focus mode_toggle
 # focus the parent container
 bindsym $mod+a focus parent
 
+# focus the child container
+bindsym $mod+w focus child
+
 # open new empty workspace
 bindsym $mod+Ctrl+n exec ~/.config/i3/scripts/empty_workspace
 
