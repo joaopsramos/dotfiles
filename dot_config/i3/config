@@ -292,8 +292,7 @@ for_window [class="Spotify"] move --no-auto-back-and-forth container to workspac
 #
 # for custom config:
 # exec_always --no-startup-id picom --config  ~/.config/picom/picom.conf --experimental-backends
-exec_always --no-startup-id picom --animations --animation-window-mass 0.5 --animation-for-open-window zoom --animation-stiffness 300 --config  ~/.config/picom/picom.conf --experimental-backends
-
+exec_always --no-startup-id picom -b --animations --animation-window-mass 1 --animation-for-open-window zoom --animation-for-transient-window fly-in --animation-stiffness 300 --config  ~/.config/picom/picom.conf --experimental-backends --animation-dampening 30
 exec --no-startup-id ~/.config/xborder/xborders --config ~/.config/xborder.json
 
 #############################################
@@ -521,6 +520,8 @@ bindsym $mod+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
 #exec --no-startup-id greenclip daemon>/dev/null
 #bindsym $mod+c exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard \
 #		-config ~/.config/rofi/rofidmenu.rasi
+
+exec_always --no-startup-id set $POLYBAR_M_RIGHT="date"
 
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 
