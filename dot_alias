@@ -1,0 +1,22 @@
+alias cfgnv="cd ~/.config/nvim && nvim"
+
+alias pacs="sudo pacman -S"
+alias pacup="sudo pacman -Syu"
+alias pacf="pacman -Ss"
+alias pacq="pacman -Q"
+
+alias icat="kitty +kitten icat"
+
+alias chzadd="chezmoi add \
+  ~/.zshrc \
+  ~/.alias \
+  ~/.config/dunst \
+  ~/.config/i3 \
+  ~/.config/picom \
+  ~/.config/polybar \
+  ~/.config/yay/ \
+  ~/.config/betterlockscreenrc \
+  ~/.config/kitty \
+  ~/.config/xborder \
+  ~/.config/xborder.json \
+"
