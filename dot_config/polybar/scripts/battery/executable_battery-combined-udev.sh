@@ -42,28 +42,40 @@ battery_print() {
     battery_percent=$(("$battery_percent / $battery_max"))
 
     if [ "$ac" -eq 1 ]; then
-        icon="%{T1}%{F#9ece6a}%{F-}%{T-}"
+        icon="%{T5}%{F#9ece6a}"
+    else
+        icon="%{T5}"
 
         # if [ "$battery_percent" -gt 97 ]; then
         #     echo "$icon"
         # else
-        echo "$icon $battery_percent%"
+        # echo "$icon $battery_percent%"
         # fi
-    else
-        if [ "$battery_percent" -gt 85 ]; then
-            icon="%{T5}%{T-}"
-        elif [ "$battery_percent" -gt 60 ]; then
-            icon="%{T5}%{T-}"
-        elif [ "$battery_percent" -gt 35 ]; then
-            icon="%{T5}%{T-}"
-        elif [ "$battery_percent" -gt 20 ]; then
-            icon="%{T5}%{F#e0af68}%{F-}%{T-}"
-        else
-            icon="%{T5}%{F#f7768e}%{F-}%{T-}"
+    fi
+
+    if [ "$battery_percent" -gt 85 ]; then
+        icon="$icon"
+    elif [ "$battery_percent" -gt 60 ]; then
+        icon="$icon"
+    elif [ "$battery_percent" -gt 35 ]; then
+        icon="$icon"
+    elif [ "$battery_percent" -gt 20 ]; then
+        if [ "$ac" -ne 1 ]; then
+            icon="$icon%{F-}%{F#e0af68}"
         fi
 
-        echo "$icon $battery_percent%"
+        icon="$icon"
+    else
+        if [ "$ac" -ne 1 ]; then
+            icon="$icon%{F-}%{F#f7768e}"
+        fi
+
+        icon="$icon"
     fi
+
+    icon="$icon%{T-}%{F-}"
+
+    echo "$icon $battery_percent%"
 }
 
 path_pid="/tmp/polybar-battery-combined-udev.pid"
