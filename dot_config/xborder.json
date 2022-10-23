@@ -1,6 +1,6 @@
 {
     "border-rgba": "#bd93f9ff",
-    "border-radius": 12,
+    "border-radius": 16,
     "border-width": 2,
     "border-mode": "outside",
     "disable-version-warning": false,

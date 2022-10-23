@@ -1,5 +1,5 @@
 # exec_always --no-startup-id picom --config  ~/.config/picom/picom.conf --experimental-backends
-exec_always --no-startup-id picom -b --animations --animation-window-mass 1 --animation-for-open-window zoom --animation-for-transient-window fly-in --animation-stiffness 300 --config  ~/.config/picom/picom.conf --experimental-backends --animation-dampening 30
+exec_always --no-startup-id picom -b --animations --animation-window-mass 1 --animation-for-open-window zoom --animation-stiffness 300 --config  ~/.config/picom/picom.conf --experimental-backends --animation-dampening 30
 
 exec --no-startup-id ~/.config/xborder/xborders --config ~/.config/xborder.json
 

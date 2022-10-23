@@ -5,6 +5,7 @@ bindsym $mod+Ctrl+c reload
 bindsym $mod+Ctrl+r restart
 bindsym $mod+o exec betterlockscreen --lock dim
 
+bindsym $mod+n exec --no-startup-id thunar
 bindsym $mod+d exec --no-startup-id ~/.config/rofi/launchers/type-2/launcher.sh
 bindsym $mod+Ctrl+q exec ~/.config/rofi/powermenu/type-1/powermenu.sh
 

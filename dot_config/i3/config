@@ -74,6 +74,7 @@ set $bg_highlight #313340
 set $fg #c0caf5
 set $purple	#bd93f9
 set $blue #7dcfff
+set $green #9ece6a
 set $danger		#f7768e
 set $alert	#e0af68
 
