@@ -11,6 +11,7 @@ alias chzadd="chezmoi add \
   ~/.zshrc \
   ~/.alias \
   ~/.config/dunst \
+  ~/.config/spaceship.zsh \
   ~/.config/i3 \
   ~/.config/picom \
   ~/.config/polybar \

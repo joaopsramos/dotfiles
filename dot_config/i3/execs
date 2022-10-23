@@ -1,0 +1,31 @@
+# exec_always --no-startup-id picom --config  ~/.config/picom/picom.conf --experimental-backends
+exec_always --no-startup-id picom -b --animations --animation-window-mass 1 --animation-for-open-window zoom --animation-for-transient-window fly-in --animation-stiffness 300 --config  ~/.config/picom/picom.conf --experimental-backends --animation-dampening 30
+
+exec --no-startup-id ~/.config/xborder/xborders --config ~/.config/xborder.json
+
+# Background
+exec --no-startup-id feh --bg-fill /home/joao/Pictures/Wallpapers/main.png
+
+#get auth work with polkit-gnome
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+
+exec --no-startup-id dex --autostart --environment i3
+
+# configure multiple keyboard layouts and hotkey to switch (Alt+CAPSLOCK in this example)
+#exec --no-startup-id setxkbmap -layout 'us,sk' -variant altgr-intl,qwerty -option 'grp:alt_caps_toggle'
+
+# set powersavings for display:
+exec --no-startup-id xset s 480 dpms 600 600 600
+
+# disable power saving (for example if using xscreensaver)
+#exec --no-startup-id xset -dpms
+
+# xscreensaver
+# https://www.jwz.org/xscreensaver
+#exec --no-startup-id xscreensaver --no-splash
+
+# Desktop notifications
+exec --no-startup-id dbus-launch dunst --config ~/.config/dunst/dunstrc
+
+exec_always --no-startup-id ~/.config/polybar/launch.sh
+exec --no-startup-id i3-msg "workspace 1"
