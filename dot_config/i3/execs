@@ -4,7 +4,7 @@ exec_always --no-startup-id picom -b --animations --animation-window-mass 1 --an
 exec --no-startup-id ~/.config/xborder/xborders --config ~/.config/xborder.json
 
 # Background
-exec --no-startup-id feh --bg-fill /home/joao/Pictures/Wallpapers/main.png
+exec --no-startup-id feh --bg-fill /home/joao/Pictures/Wallpapers/main2.png
 
 #get auth work with polkit-gnome
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
