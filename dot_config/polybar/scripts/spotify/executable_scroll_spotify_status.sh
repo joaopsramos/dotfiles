@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # see man zscroll for documentation of the following parameters
 /home/joao/.asdf/shims/zscroll -l 30 \
