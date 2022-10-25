@@ -10,14 +10,15 @@ alias icat="kitty +kitten icat"
 alias chzadd="chezmoi add \
   ~/.zshrc \
   ~/.alias \
+  ~/.config/betterlockscreenrc \
   ~/.config/dunst \
-  ~/.config/spaceship.zsh \
   ~/.config/i3 \
+  ~/.config/kitty \
   ~/.config/picom \
   ~/.config/polybar \
-  ~/.config/yay/ \
-  ~/.config/betterlockscreenrc \
-  ~/.config/kitty \
+  ~/.config/rofi \
+  ~/.config/spaceship.zsh \
   ~/.config/xborder \
   ~/.config/xborder.json \
+  ~/.config/yay/ \
 "
