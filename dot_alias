@@ -12,6 +12,7 @@ alias chzadd="chezmoi add \
   ~/.alias \
   ~/.config/betterlockscreenrc \
   ~/.config/dunst \
+  ~/.config/galendae \
   ~/.config/i3 \
   ~/.config/kitty \
   ~/.config/picom \
