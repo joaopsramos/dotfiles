@@ -15,6 +15,7 @@ alias chzadd="chezmoi add \
   ~/.config/galendae \
   ~/.config/i3 \
   ~/.config/kitty \
+  ~/.config/kmonad.kbd \
   ~/.config/picom \
   ~/.config/polybar \
   ~/.config/rofi \

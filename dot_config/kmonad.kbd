@@ -9,6 +9,7 @@
 
 (defsrc
   caps a s d f g h j k l ; '
+    alt
 )
 
 (defalias
@@ -28,13 +29,16 @@
 )
 
 (deflayer homerowmods
-   @esc-or-ctrl-hmrw  @met_a   @alt_s   @sft_d   @ctl_f   g   h   @ctl_j   @sft_k   @alt_l   @met_; '
+   esc  @met_a   @alt_s   @sft_d   @ctl_f   g   h   @ctl_j   @sft_k   @alt_l   @met_; '
+      @esc-or-ctrl-hmrw
 )
 
 (deflayer qwerty
-  @esc-or-ctrl-hmrw  a s d f g h j k l  ; '
+  esc  a s d f g h j k l  ; '
+    @esc-or-ctrl-hmrw
 )
 
 (deflayer ctrl-or-hmrw-utils
-  @esc-or-ctrl-hmrw  C-a C-s C-d C-f C-g left down up right  home  end
+   esc C-a C-s C-d C-f C-g left down up right  home  end
+      @esc-or-ctrl-hmrw
 )
