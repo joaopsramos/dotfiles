@@ -15,7 +15,7 @@ battery_print() {
         return
     fi
 
-    if [ $(cat "$PATH_BATTERY_0/status") == "Charging" ]; then
+    if [ $(cat "$PATH_BATTERY_0/status") != "Discharging" ]; then
         ac=1
     fi
 
