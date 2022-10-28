@@ -1,8 +1,10 @@
 # Windows class
 
 assign [class="discord"] $ws6
-
 for_window [class=".*"] border none
+
+for_window [class="kitty" floating] resize set 1800 950, move absolute position left
+
 for_window [class="Thunar"] focus
 for_window [class="Spotify"] move --no-auto-back-and-forth container to workspace $ws2
 
