@@ -27,7 +27,7 @@ set $ws10 "10"
 workspace_layout default
 
 gaps inner 14
-gaps outer 0
+gaps outer -2
 
 # new_window pixel 1
 hide_edge_borders both
