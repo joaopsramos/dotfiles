@@ -240,7 +240,7 @@ def notify_version():
         our_location = os.path.dirname(os.path.abspath(__file__))
 
         url = "https://raw.githubusercontent.com/deter0/xborder/main/version.txt"  # Maybe hardcoding it is a bad idea
-        request = requests.get(url, allow_redirects=True)
+        request = requests.get(url, allow_redirects=True, timeout=3)
         latest_version_string = request.content.decode("utf-8")
 
         latest_version = float(latest_version_string)

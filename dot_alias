@@ -1,3 +1,4 @@
+alias nv="nvim"
 alias cfgnv="cd ~/.config/nvim && nvim"
 
 alias pacs="sudo pacman -S"
