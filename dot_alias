@@ -23,7 +23,6 @@ alias chzadd="chezmoi add \
   ~/.config/polybar \
   ~/.config/rofi \
   ~/.config/spaceship.zsh \
-  ~/.config/xborder \
   ~/.config/xborder.json \
   ~/.config/yay/ \
 "

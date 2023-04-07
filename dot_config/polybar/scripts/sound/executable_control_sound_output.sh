@@ -3,8 +3,8 @@
 SINKS=$(pactl list short sinks | awk -v OFS='\t' '{print $2}')
 CURRENT_SINK=$(pactl get-default-sink)
 
-SINK_ICONS=("Astro:" "bluez:")
-DEFAULT_ICON="蓼"
+SINK_ICONS=("Astro:%{T3}%{T-}" "bluez:%{T3}%{T-}")
+DEFAULT_ICON="%{T2}蓼%{T-}"
 
 CURRENT_SINK_IDX=0
 CURRENT_SINK_ICON=""
@@ -63,5 +63,4 @@ fi
 
 pactl set-default-sink $NEXT_SINK
 polybar-msg action "#sound-output.hook.0"
-
 echo $NEXT_SINK_ICON

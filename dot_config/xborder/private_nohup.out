@@ -1,4 +1,0 @@
-/home/joao/.config/xborder/xborders:281: DeprecationWarning: Gtk.Window.set_wmclass is deprecated
-  self.set_wmclass("xborders", "xborder")
-/home/joao/.config/xborder/xborders:280: DeprecationWarning: Gtk.Window.set_wmclass is deprecated
-  self.set_wmclass("xborders", "xborder")

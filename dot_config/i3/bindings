@@ -3,12 +3,12 @@ bindsym $mod+r mode "resize"
 bindsym $mod+q kill
 bindsym $mod+Ctrl+c reload
 bindsym $mod+Ctrl+r restart
-bindsym $mod+o exec betterlockscreen --lock dim
+bindsym $mod+o exec --no-startup-id betterlockscreen --lock dim
 
-bindsym $mod+p exec flameshot gui
+bindsym $mod+p exec --no-startup-id flameshot gui
 bindsym $mod+n exec --no-startup-id thunar
 bindsym $mod+d exec --no-startup-id ~/.config/rofi/launcher/launcher.sh
-bindsym $mod+Ctrl+q exec ~/.config/rofi/powermenu/powermenu.sh
+bindsym $mod+Ctrl+q exec --no-startup-id ~/.config/rofi/powermenu/powermenu.sh
 
 # Windows
 bindsym $mod+$left focus left
@@ -71,7 +71,7 @@ bindsym XF86AudioRaiseVolume exec amixer -D pulse sset Master 5%+ && pkill -RTMI
 bindsym XF86AudioLowerVolume exec amixer -D pulse sset Master 5%- && pkill -RTMIN+1 i3blocks
 bindsym XF86AudioMute exec amixer sset Master toggle && killall -USR1 i3blocks
 
-bindsym XF86AudioPlay exec playerctl play-pause -p spotify
-bindsym XF86AudioNext exec playerctl next -p spotify
-bindsym XF86AudioPrev exec playerctl previous -p spotify
+bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause -p spotify
+bindsym XF86AudioNext exec --no-startup-id playerctl next -p spotify
+bindsym XF86AudioPrev exec --no-startup-id playerctl previous -p spotify
 
