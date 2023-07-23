@@ -14,7 +14,6 @@ alias chzadd="chezmoi add \
   ~/.alias \
   ~/.gitignore \
   ~/.gitconfig \
-  ~/.ssh/config \
   ~/.p10k.zsh \
   ~/.tool-versions \
   ~/.config/betterlockscreenrc \
@@ -28,5 +27,4 @@ alias chzadd="chezmoi add \
   ~/.config/rofi \
   ~/.config/spaceship.zsh \
   ~/.config/xborder.json \
-  ~/.config/yay/ \
 "
