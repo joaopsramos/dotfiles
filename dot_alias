@@ -12,7 +12,11 @@ alias icat="kitty +kitten icat"
 alias chzadd="chezmoi add \
   ~/.zshrc \
   ~/.alias \
+  ~/.gitignore \
+  ~/.gitconfig \
+  ~/.ssh/config \
   ~/.p10k.zsh \
+  ~/.tool-versions \
   ~/.config/betterlockscreenrc \
   ~/.config/dunst \
   ~/.config/galendae \

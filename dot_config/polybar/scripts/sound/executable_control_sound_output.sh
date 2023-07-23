@@ -62,5 +62,4 @@ if [[ "$CURRENT_SINK" == "$NEXT_SINK" ]]; then
 fi
 
 pactl set-default-sink $NEXT_SINK
-polybar-msg action "#sound-output.hook.0"
-echo $NEXT_SINK_ICON
+polybar-msg action "#sound-output.hook.0" &

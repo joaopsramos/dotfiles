@@ -4,6 +4,7 @@ import sys
 
 ICONS = {"Astro": "%{T3}%{T-}", "bluez": "%{T3}%{T-}"}
 DEFAULT_ICON = "%{T2}蓼%{T-}"
+SINKS_TO_IGNORE = ["hdmi"]
 
 def show_icon(sink):
     print(get_icon(sink))
@@ -37,11 +38,24 @@ def get_all_sinks():
     output = run_cmd(['pactl', 'list', 'short', 'sinks'])
 
     for line in output.split('\n'):
-        if line:
-            sink = line.split()[1]
-            sinks.append(sink.strip())
+        if not line:
+            continue
+
+        sink = line.split()[1]
+
+        if ignore_sink(sink):
+            continue
+
+        sinks.append(sink.strip())
 
     return sinks
+
+def ignore_sink(sink):
+    for s in SINKS_TO_IGNORE:
+        if s.lower() in sink.lower():
+            return True
+
+    return False
 
 def get_current_sink():
     return run_cmd(['pactl', 'get-default-sink']).strip()
@@ -49,14 +63,13 @@ def get_current_sink():
 def run_cmd(args):
     return subprocess.run(args, stdout=subprocess.PIPE).stdout.decode('utf-8')
 
+CURRENT_SINK = get_current_sink()
 SINKS = get_all_sinks()
 
 if __name__ == '__main__':
-    args = sys.argv
-
-    match args[1]:
+    match sys.argv[1]:
         case 'show-current':
-            show_icon(get_current_sink())
+            show_icon(CURRENT_SINK)
 
         case 'next':
-            next_sink(get_current_sink())
+            next_sink(CURRENT_SINK)

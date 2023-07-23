@@ -11,7 +11,7 @@
   ci = commit
   sw = switch
   sbk = switch -
-  sm = switch main
+  sn = switch next
   sb = switch --create
   s = status -sb
   bd = branch -d

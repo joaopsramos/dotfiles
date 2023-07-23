@@ -44,5 +44,8 @@ source ~/.alias
 export ERL_AFLAGS="-kernel shell_history enabled"
 export FIREBASE_FCM_KEY=AIzaSyCfjAZ1p70HUhbCq006bnAwxgEO6nP4Bag
 
+export FLYCTL_INSTALL="/home/joao/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
