@@ -29,3 +29,5 @@
 
 [init]
   defaultBranch = main
+[maintenance]
+	repo = /home/joao/.config/znap/zsh-snap

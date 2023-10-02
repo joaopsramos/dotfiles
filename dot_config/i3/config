@@ -27,7 +27,7 @@ set $ws10 "10"
 workspace_layout default
 
 gaps inner 12
-gaps outer 0
+gaps top -5
 
 # new_window pixel 1
 hide_edge_borders both
@@ -69,14 +69,14 @@ mode "resize" {
 
 # Define colors variables:
 set $transparent #ffffff00
-set $bg	#21222b
-set $bg_highlight #313340
-set $fg #c0caf5
-set $purple	#bd93f9
+set $bg	#1e2030
+set $bg_highlight #363a4f
+set $fg #cad3f5
+set $purple #c6a0f6
 set $blue #7dcfff
 set $green #9ece6a
-set $danger		#f7768e
-set $alert	#e0af68
+set $danger #f7768e
+set $alert #e0af68
 
 #class									border				bground					text			indicator		child_border
 client.focused		    	$transparent	$bg_highlight		$purple		$alert			$alert
