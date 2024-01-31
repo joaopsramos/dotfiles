@@ -1,6 +1,6 @@
 chezmoi 2.22.1
-elixir 1.14.0-otp-25
-erlang 25.1.1
+elixir 1.15.6-otp-26
+erlang 26.1.1
 haskell 8.10-latest
 neovim nightly
 nodejs 20.5.0
