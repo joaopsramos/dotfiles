@@ -28,3 +28,11 @@ alias chzadd="chezmoi add \
   ~/.config/spaceship.zsh \
   ~/.config/xborder.json \
 "
+
+cm() {
+  git diff --staged | cody chat --stdin -m 'Write a commit message for this diff'
+}
+
+prmaker() {
+
+}
