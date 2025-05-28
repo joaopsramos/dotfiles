@@ -29,3 +29,6 @@ exec --no-startup-id dbus-launch dunst --config ~/.config/dunst/dunstrc
 
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec --no-startup-id i3-msg "workspace 1"
+
+# hide cursor
+exec --no-startup-id unclutter &

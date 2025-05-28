@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ASTRO="alsa_output.usb-Astro_Gaming_Astro_MixAmp_Pro-00.analog-stereo"
+ASTRO="alsa_output.usb-Astro_Gaming_Astro_MixAmp_Pro-00.stereo-game"
 SPEAKERS="alsa_output.pci-0000_09_00.4.analog-stereo"
 
 CURRENT_SINK=$(pactl get-default-sink)
