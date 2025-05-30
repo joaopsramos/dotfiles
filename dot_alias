@@ -27,6 +27,8 @@ alias chzadd="chezmoi add \
   ~/.config/rofi \
   ~/.config/spaceship.zsh \
   ~/.config/xborder.json \
+  ~/.config/hypr \
+  ~/.config/waybar \
 "
 
 cm() {

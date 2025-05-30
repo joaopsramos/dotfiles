@@ -42,13 +42,24 @@ zinit light zsh-users/zsh-completions
 # -------------------
 source ~/.alias
 
+export BROWSER=/usr/bin/brave
 export ERL_AFLAGS="-kernel shell_history enabled"
-export FIREBASE_FCM_KEY=AIzaSyCfjAZ1p70HUhbCq006bnAwxgEO6nP4Bag
 
 export FLYCTL_INSTALL="/home/joao/.fly"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 export GIT_COMPLETION_CHECKOUT_NO_GUESS=1
+
+export PATH=~/www/fincon:$PATH
+
+go() {
+  if [[ "$1" == "test" ]]; then
+    shift  # Remove "test" from arguments
+    gotestpp "$@"
+  else
+    command go "$@"
+  fi
+}
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -62,3 +73,6 @@ zinit light-mode for \
     zdharma-continuum/zinit-annex-rust
 
 ### End of Zinit's installer chunk
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/joao/.cache/lm-studio/bin"

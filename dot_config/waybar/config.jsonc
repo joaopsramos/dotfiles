@@ -1,0 +1,96 @@
+{
+  "margin-top": 10,
+  "margin-left": 0,
+  "margin-right": 0,
+  "height": 30,
+  "modules-left": ["hyprland/workspaces", "mpris"],
+  "modules-center": ["clock"],
+  "modules-right": ["custom/sound-output", "pulseaudio", "cpu", "memory", "disk", "network"],
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "on-click": "activate",
+    "format-icons": {
+      "default": "<big></big>",
+      "active": "<big></big>"
+    }
+  },
+  "mpris": {
+    "player": "spotify",
+    "format": "{player_icon} {dynamic} {status_icon}",
+    "dynamic-order": ["title", "artist"],
+    "player-icons": {
+      "spotify": "<span color=\"#1db954\">󰓇</span>"
+    },
+    "status-icons": {
+      "playing": "<span color=\"#ed8796\"></span>",
+      "paused": "<span color=\"#7dc4e4\">󰐌</span>"
+    }
+  },
+  "group/spotify": {
+    "orientation": "horizontal",
+    "modules": ["custom/spotify-icon", "custom/spotify", "custom/spotify-player"]
+  },
+  "custom/spotify-icon": {
+    "format": "󰓇"
+  },
+  "custom/spotify": {
+    "tooltip": false,
+    "exec": "~/.config/waybar/scripts/spotify/scroll_spotify_status.sh"
+  },
+  "custom/spotify-player": {
+    "tooltip": false,
+    "interval": 1,
+    "return-type": "json",
+    "exec": "~/.config/waybar/scripts/spotify/player.sh",
+    "on-click": "playerctl play-pause spotify"
+  },
+  "clock": {
+    "interval": 1,
+    "tooltip": false,
+    "format-alt": "{:%d/%m %H:%M}",
+    "on-click-right": "galendae"
+  },
+  "tray": {
+    "icon-size": 16,
+    "spacing": 10
+  },
+  "custom/sound-output": {
+    "tooltip": false,
+    "interval": "once",
+    "signal": 3,
+    "exec": "~/.config/waybar/scripts/sound-output.sh --icon",
+    "on-click": "~/.config/waybar/scripts/sound-output.sh"
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰝟",
+    "format-icons": {
+      "default": ["", "", ""]
+    },
+    "tooltip": false,
+    "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "on-click-right": "pavucontrol -t 3"
+  },
+  "cpu": {
+    "interval": 2,
+    "format": " {usage}%",
+    "tooltip": true
+  },
+  "memory": {
+    "interval": 2,
+    "format": " {}%"
+  },
+  "disk": {
+    "interval": 25,
+    "format": " {percentage_used}%",
+    "tooltip-format": "{used}/{total}, {free} free"
+  },
+  "network": {
+    "interval": 10,
+    "format-wifi": " {signalStrength}%",
+    "format-ethernet": "<big>󰒢</big>",
+    "tooltip-format": "{ifname} via {gwaddr} 󰒢",
+    "format-linked": "{ifname} (No IP) 󰒢",
+    "format-disconnected": "<big>󰞃</big>"
+  }
+}
