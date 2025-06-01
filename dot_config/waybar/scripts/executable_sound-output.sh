@@ -49,13 +49,13 @@ elif [[ $((CURRENT_SINK_IDX + 1)) < "${#SINK_ICONS[@]}" ]]; then
   done <<< "$SINKS"
 fi
 
-if [[ "$CURRENT_SINK" == "$NEXT_SINK" ]]; then
-  notify-send -u normal "   Sound control: No other available sinks!"
-fi
-
 if [[ "$1" == "--icon" ]]; then
   echo $CURRENT_SINK_ICON
   exit 0
+fi
+
+if [[ "$CURRENT_SINK" == "$NEXT_SINK" ]]; then
+  notify-send -u normal "   Sound control: No other available sinks!"
 fi
 
 pactl set-default-sink $NEXT_SINK

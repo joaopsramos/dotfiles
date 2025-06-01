@@ -1,9 +1,9 @@
 {
   "margin-top": 10,
-  "margin-left": 0,
-  "margin-right": 0,
+  "margin-left": -4,
+  "margin-right": -4,
   "height": 30,
-  "modules-left": ["hyprland/workspaces", "mpris"],
+  "modules-left": ["hyprland/workspaces", "mpris", "privacy"],
   "modules-center": ["clock"],
   "modules-right": ["custom/sound-output", "pulseaudio", "cpu", "memory", "disk", "network"],
   "hyprland/workspaces": {
@@ -11,7 +11,8 @@
     "on-click": "activate",
     "format-icons": {
       "default": "<big></big>",
-      "active": "<big></big>"
+      "active": "<big></big>",
+      "urgent": "<big></big>"
     }
   },
   "mpris": {
@@ -25,6 +26,23 @@
       "playing": "<span color=\"#ed8796\"></span>",
       "paused": "<span color=\"#7dc4e4\">󰐌</span>"
     }
+  },
+  "privacy": {
+    "icon-spacing": 8,
+    "icon-size": 16,
+    "transition-duration": 250,
+    "modules": [
+      {
+        "type": "screenshare",
+        "tooltip": true,
+        "tooltip-icon-size": 24
+      },
+      {
+        "type": "audio-in",
+        "tooltip": true,
+        "tooltip-icon-size": 24
+      }
+    ]
   },
   "group/spotify": {
     "orientation": "horizontal",
@@ -62,7 +80,7 @@
     "on-click": "~/.config/waybar/scripts/sound-output.sh"
   },
   "pulseaudio": {
-    "format": "{icon} {volume}%",
+    "format": "{icon}  {volume}%",
     "format-muted": "󰝟",
     "format-icons": {
       "default": ["", "", ""]
@@ -73,24 +91,37 @@
   },
   "cpu": {
     "interval": 2,
-    "format": " {usage}%",
+    "format": "  {usage}%",
     "tooltip": true
   },
   "memory": {
     "interval": 2,
-    "format": " {}%"
+    "format": "  {}%"
+  },
+  "battery": {
+    "interval": 60,
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "<big>{icon}</big> {capacity}%",
+    "format-icons": {
+      "default": ["󱉞", "󰁺", "󰁼", "󰁾", "󰂀", "󰂂", "󰁹"],
+      "charging": ["󰢟", "󰢜", "󰂇", "󰢝", "󰢞", "󰂋", "󰂅"]
+    }
   },
   "disk": {
     "interval": 25,
-    "format": " {percentage_used}%",
+    "format": "  {percentage_used}%",
     "tooltip-format": "{used}/{total}, {free} free"
   },
   "network": {
     "interval": 10,
-    "format-wifi": " {signalStrength}%",
+    "format-wifi": " ",
     "format-ethernet": "<big>󰒢</big>",
-    "tooltip-format": "{ifname} via {gwaddr} 󰒢",
     "format-linked": "{ifname} (No IP) 󰒢",
-    "format-disconnected": "<big>󰞃</big>"
+    "format-disconnected": "<big>󰞃</big>",
+    "tooltip-format": "{ifname} via {gwaddr} - {signalStrength}%",
+    "tooltip-format-wifi": "{essid}",
   }
 }

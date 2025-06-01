@@ -3,21 +3,16 @@
 * {
   font-family: "Hack Nerd Font", Roboto, Helvetica, Arial, sans-serif;
   font-size: 16px;
+  border: none;
+  border-radius: 0;
+  min-height: 0;
 }
 
 window#waybar {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: transparent;
   border-radius: 8px;
   transition-property: background-color;
   transition-duration: .5s;
-}
-
-button {
-  /* Use box-shadow instead of border so the text isn't offset */
-  box-shadow: inset 0 -3px transparent;
-  /* Avoid rounded borders under each button name */
-  border: none;
-  border-radius: 0;
 }
 
 /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
@@ -35,31 +30,31 @@ button:hover {
 
 #workspaces button {
   padding: 0 2px;
-  background-color: transparent;
   color: @mauve;
 }
 
-#workspaces button:hover {
-  background: rgba(0, 0, 0, 0.2);
+#workspaces button.empty {
+  color: @surface1;
 }
 
 #workspaces button.focused {
-  background-color: @lavender;
   box-shadow: inset 0 -3px #ffffff;
 }
 
 #workspaces button.urgent {
-  background-color: @red;
+  color: @red;
 }
 
 #workspaces,
 #mpris,
+#privacy,
 #clock,
 #tray,
 #custom-sound-output,
 #pulseaudio ,
 #cpu,
 #memory,
+#battery,
 #disk,
 #network {
   padding: 0 14px;
@@ -68,8 +63,17 @@ button:hover {
   border-radius: 8px;
 }
 
-#mpris.spotify {
+#mpris {
   color: @text;
+}
+
+#privacy {
+  padding: 0 12px;
+  background-color: @red;
+}
+
+#privacy-item {
+  color: @base;
 }
 
 #custom-spotify-icon,
@@ -128,6 +132,22 @@ button:hover {
   color: @maroon;
 }
 
+#battery {
+  color: @text;
+}
+
+#battery.charging {
+  color: @green;
+}
+
+#battery.warning {
+  color: @yellow;
+}
+
+#battery.critical {
+  color: @red;
+}
+
 #disk {
   color: @teal;
 }
@@ -139,4 +159,3 @@ button:hover {
 #network.disconnected {
   color: @red;
 }
-
