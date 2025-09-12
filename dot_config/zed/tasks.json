@@ -4,18 +4,23 @@
 [
   {
     "label": "Open alternate file",
-    "command": "sh ~/.config/zed/scripts/open_alternate_file.sh",
+    "command": "~/.config/zed/scripts/open_alternate_file.sh",
     "reveal": "never",
     "hide": "always"
   },
   {
     "label": "Test file",
-    "command": "sh ~/.config/zed/scripts/test.sh",
+    "command": "~/.config/zed/scripts/test.sh",
     "reveal": "no_focus"
   },
   {
     "label": "Run single test",
-    "command": "sh ~/.config/zed/scripts/test.sh --line",
+    "command": "~/.config/zed/scripts/test.sh --line",
+    "reveal": "no_focus"
+  },
+  {
+    "label": "Run last test",
+    "command": "~/.config/zed/scripts/test.sh --rerun",
     "reveal": "no_focus"
   },
   {

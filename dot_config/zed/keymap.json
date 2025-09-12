@@ -37,10 +37,11 @@
       "space h s": "git::StageAndNext",
       "space h u": "git::UnstageAndNext",
       "space h r": "git::Restore",
+      "space s o": ["workspace::SendKeystrokes", "v i p : sort enter"],
       "space t n": ["task::Spawn", { "task_name": "Run single test" }],
       "space t f": ["task::Spawn", { "task_name": "Test file" }],
-      // "space t l": ["task::Spawn", { "task_name": "Run last test" }],
-      "space t l": "task::Rerun",
+      "space t l": ["task::Spawn", { "task_name": "Run last test" }],
+      // "space t l": "task::Rerun",
       "space a t": ["task::Spawn", { "task_name": "Open alternate file" }]
     }
   },
@@ -68,6 +69,13 @@
     "context": "VimControl && !menu",
     "bindings": {
       "ctrl-q": "vim::ToggleRecord"
+    }
+  },
+  {
+    "context": "!ContextEditor > Editor && mode == full",
+    "bindings": {
+      "ctrl-enter": null,
+      "ctrl-/": "assistant::InlineAssist"
     }
   }
 ]

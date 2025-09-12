@@ -18,5 +18,5 @@ elif [[ "$file" == *_test.exs ]]; then
 fi
 
 if [[ -n "$file_to_open" ]]; then
-    zeditor "$file_to_open"
+    zed "$file_to_open"
 fi
