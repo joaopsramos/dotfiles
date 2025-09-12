@@ -9,20 +9,14 @@
   {
     "bindings": {
       // Avoid quitting
-      "ctrl-q": null
+      "ctrl-q": null,
+      "shift-q": "workspace::CloseWindow",
+      "ctrl-shift-w": null
     }
   },
   {
     "context": "Workspace",
-    "bindings": {
-      // "shift shift": "file_finder::Toggle"
-    }
-  },
-  {
-    "context": "Editor",
-    "bindings": {
-      // "j k": ["workspace::SendKeystrokes", "escape"]
-    }
+    "bindings": {}
   },
   {
     "context": "Editor && vim_mode == normal",
@@ -44,14 +38,30 @@
       "space h u": "git::UnstageAndNext",
       "space h r": "git::Restore",
       "space t n": ["task::Spawn", { "task_name": "Run single test" }],
-      "space t f": ["task::Spawn", { "task_name": "Run test file" }],
+      "space t f": ["task::Spawn", { "task_name": "Test file" }],
+      // "space t l": ["task::Spawn", { "task_name": "Run last test" }],
+      "space t l": "task::Rerun",
       "space a t": ["task::Spawn", { "task_name": "Open alternate file" }]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == visual",
+    "bindings": {
+      "ctrl-y": "editor::Copy"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == visual && !VimWaiting && !VimObject",
+    "bindings": {
+      "ctrl-p": ["vim::Paste", { "preserve_clipboard": true }],
+      "ctrl-shift-v": ["workspace::SendKeystrokes", "x i ctrl-shift-v escape"]
     }
   },
   {
     "context": "Terminal",
     "bindings": {
-      "escape": "workspace::ToggleBottomDock"
+      "escape": "workspace::ToggleBottomDock",
+      "ctrl-shift-w": "pane::CloseActiveItem"
     }
   },
   {
@@ -59,6 +69,5 @@
     "bindings": {
       "ctrl-q": "vim::ToggleRecord"
     }
-  },
-  { "context": "" }
+  }
 ]

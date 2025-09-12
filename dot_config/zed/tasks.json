@@ -9,15 +9,13 @@
     "hide": "always"
   },
   {
-    "label": "Run single test",
-    "command": "mix test",
-    "args": ["$ZED_RELATIVE_FILE:$ZED_ROW"],
+    "label": "Test file",
+    "command": "sh ~/.config/zed/scripts/test.sh",
     "reveal": "no_focus"
   },
   {
-    "label": "Run test file",
-    "command": "mix test",
-    "args": ["$ZED_RELATIVE_FILE"],
+    "label": "Run single test",
+    "command": "sh ~/.config/zed/scripts/test.sh --line",
     "reveal": "no_focus"
   },
   {

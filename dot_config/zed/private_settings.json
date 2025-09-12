@@ -38,7 +38,7 @@
   "pane_split_direction_vertical": "right",
   "vim": {
     "toggle_relative_line_numbers": true,
-    "use_system_clipboard": "on_yank"
+    "use_system_clipboard": "never"
   },
   "vim_mode": true,
   "languages": {
