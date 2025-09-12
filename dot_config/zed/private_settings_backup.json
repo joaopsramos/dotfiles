@@ -1,0 +1,94 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "agent": {
+    "inline_assistant_model": {
+      "provider": "lmstudio",
+      "model": "qwen2.5-coder-7b-instruct"
+    },
+    "default_profile": "minimal",
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "claude-3-5-sonnet"
+    },
+    "version": "2"
+  },
+  "features": {
+    "edit_prediction_provider": "supermaven"
+  },
+  "buffer_font_family": "Hack Nerd Font Mono",
+  "buffer_font_size": 14,
+  "ensure_final_newline_on_save": true,
+  "relative_line_numbers": true,
+  "theme": {
+    "mode": "system",
+    "light": "Catppuccin Macchiato",
+    "dark": "One Dark"
+  },
+  "current_line_highlight": "gutter",
+  "ui_font_size": 16,
+  "terminal": {
+    "default_height": 400
+  },
+  "pane_split_direction_vertical": "right",
+  "vim": {
+    "toggle_relative_line_numbers": true,
+    "use_system_clipboard": "on_yank"
+  },
+  "vim_mode": true,
+  "Diff": {
+    "remove_trailing_whitespace_on_save": true,
+    "ensure_final_newline_on_save": true
+  },
+  "languages": {
+    "Elixir": {
+      "language_servers": ["lexical", "!elixir-ls"],
+      "format_on_save": {
+        "external": {
+          "command": "mix",
+          "arguments": ["format", "--stdin-filename", "{buffer_path}", "-"]
+        }
+      }
+    },
+    "HEEX": {
+      "format_on_save": {
+        "external": {
+          "command": "mix",
+          "arguments": ["format", "--stdin-filename", "{buffer_path}", "-"]
+        }
+      },
+      "language_servers": [
+        "lexical",
+        "tailwindcss-language-server",
+        "emmet-language-server"
+      ]
+    }
+  },
+  "experimental.theme_overrides": {
+    "syntax": {
+      "constant.builtin": {
+        "color": "#C6A0F6",
+        "font_style": "italic"
+      },
+      "keyword": {
+        "color": "#ED8796"
+      },
+      "type": {
+        "color": "#C6A0F6"
+      },
+      "string.special.symbol": {
+        "color": "#8BE9FD"
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "bindings": {
+      // Avoid quitting
+      "ctrl-q": null
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      // "shift shift": "file_finder::Toggle"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      // "j k": ["workspace::SendKeystrokes", "escape"]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "q": "pane::CloseActiveItem",
+      "shift-q": "zed::Quit",
+      "space g q": [
+        "workspace::SendKeystrokes",
+        "space t m ctrl-shift-w escape"
+      ],
+      "space e": "workspace::ToggleLeftDock",
+      "ctrl-a": ["workspace::SendKeystrokes", "g g V G"],
+      "space h p": "editor::ToggleSelectedDiffHunks",
+      "space t m": "terminal_panel::ToggleFocus",
+      "space f m": "editor::Format",
+      "space g r": "editor::FindAllReferences",
+      "space d a b": "pane::CloseOtherItems",
+      "space h s": "git::StageAndNext",
+      "space h u": "git::UnstageAndNext",
+      "space h r": "git::Restore",
+      "space t n": ["task::Spawn", { "task_name": "Run single test" }],
+      "space t f": ["task::Spawn", { "task_name": "Run test file" }],
+      "space a t": ["task::Spawn", { "task_name": "Open alternate file" }]
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "escape": "workspace::ToggleBottomDock"
+    }
+  },
+  {
+    "context": "VimControl && !menu",
+    "bindings": {
+      "ctrl-q": "vim::ToggleRecord"
+    }
+  },
+  { "context": "" }
+]

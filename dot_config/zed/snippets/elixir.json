@@ -1,0 +1,10 @@
+{
+  "Pipe to IO.inspect": {
+    "prefix": "ii",
+    "body": ["|> IO.inspect()", "$0"]
+  },
+  "Pipe to IO.inspect with label": {
+    "prefix": "il",
+    "body": "|> IO.inspect(label: \"$0\")"
+  }
+}

@@ -13,6 +13,9 @@
       "default": "<big></big>",
       "active": "<big></big>",
       "urgent": "<big></big>"
+    },
+    "persistent-workspaces": {
+      "*": 5
     }
   },
   "mpris": {

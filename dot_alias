@@ -29,6 +29,7 @@ alias chzadd="chezmoi add \
   ~/.config/xborder.json \
   ~/.config/hypr \
   ~/.config/waybar \
+  ~/.config/zed \
 "
 
 cm() {
