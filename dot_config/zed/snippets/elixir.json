@@ -1,7 +1,11 @@
 {
+  "Define module": {
+    "prefix": "defm",
+    "body": ["defmodule $0 do\nend"]
+  },
   "Pipe to IO.inspect": {
     "prefix": "ii",
-    "body": ["|> IO.inspect()", "$0"]
+    "body": ["|> IO.inspect()"]
   },
   "Pipe to IO.inspect with label": {
     "prefix": "il",

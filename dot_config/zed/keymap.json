@@ -10,7 +10,6 @@
     "bindings": {
       // Avoid quitting
       "ctrl-q": null,
-      "shift-q": "workspace::CloseWindow",
       "ctrl-shift-w": null
     }
   },

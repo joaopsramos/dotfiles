@@ -18,5 +18,11 @@ elif [[ "$file" == *_test.exs ]]; then
 fi
 
 if [[ -n "$file_to_open" ]]; then
-    zed "$file_to_open"
+    # Create the file if it does not exist
+    if [[ ! -e "$file_to_open" ]]; then
+        mkdir -p "$(dirname "$file_to_open")"
+        touch "$file_to_open"
+    fi
+
+    zeditor "$file_to_open"
 fi

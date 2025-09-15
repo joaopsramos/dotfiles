@@ -6,7 +6,7 @@
     "label": "Open alternate file",
     "command": "~/.config/zed/scripts/open_alternate_file.sh",
     "reveal": "never",
-    "hide": "always"
+    "hide": "on_success"
   },
   {
     "label": "Test file",
