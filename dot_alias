@@ -15,7 +15,6 @@ alias chzadd="chezmoi add \
   ~/.gitignore \
   ~/.gitconfig \
   ~/.p10k.zsh \
-  ~/.tool-versions \
   ~/.config/betterlockscreenrc \
   ~/.config/dunst \
   ~/.config/galendae \
@@ -30,12 +29,6 @@ alias chzadd="chezmoi add \
   ~/.config/hypr \
   ~/.config/waybar \
   ~/.config/zed \
+  ~/.config/mise \
+  ~/.config/neovide \
 "
-
-cm() {
-  git diff --staged | cody chat --stdin -m 'Write a commit message for this diff'
-}
-
-prmaker() {
-
-}

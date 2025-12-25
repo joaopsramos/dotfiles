@@ -21,7 +21,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 plugins=(
   git
   gitfast
-  asdf
+  mise
   docker
 )
 
@@ -76,5 +76,4 @@ zinit light-mode for \
 
 ### End of Zinit's installer chunk
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/home/joao/.cache/lm-studio/bin"
+eval "$(mise activate zsh)"

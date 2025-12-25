@@ -7,6 +7,10 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "show_edit_predictions": true,
+  "project_panel": {
+    "dock": "left"
+  },
   "context_servers": {
     "tidewave-mcp": {
       "source": "custom",

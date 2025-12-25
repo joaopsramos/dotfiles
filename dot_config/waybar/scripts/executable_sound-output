@@ -3,9 +3,10 @@ import subprocess
 import sys
 import argparse
 
-ICONS = {"Astro": "%{T3}󰋋%{T-}", "bluez": "%{T3}󰂯%{T-}", "stereo": "%{T2}󰓃%{T-}"}
-DEFAULT_ICON = "%{T2}󰓃%{T-}"
-SINKS_TO_IGNORE = ["hdmi"]
+ICONS = {"analog-stereo": "󰓃", "Astro": "󰋋", "bluez": "󰂯"}
+DEFAULT_ICON = "󰓃"
+SINKS_TO_IGNORE = ["hdmi", "stereo-chat"]
+SIGNAL=3
 
 def show_icon(sink):
     print(get_icon(sink))
@@ -25,6 +26,7 @@ def next_sink(current_sink):
 
 def set_sink(sink):
     run_cmd(['pactl', 'set-default-sink', sink])
+    run_cmd(['pkill', f'-RTMIN+{SIGNAL}', 'waybar'])
 
 def get_icon(sink):
     for alias, icon in ICONS.items():
@@ -72,7 +74,7 @@ if __name__ == '__main__':
     parser.add_argument('--icon',  action='store_true')
     parser.add_argument('--next',  action='store_true')
     args = parser.parse_args()
-    
+
     if args.icon:
         show_icon(CURRENT_SINK)
     elif args.next:
@@ -80,3 +82,4 @@ if __name__ == '__main__':
     else:
         parser.print_help()
         sys.exit(1)
+

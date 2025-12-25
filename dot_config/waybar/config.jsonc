@@ -79,8 +79,8 @@
     "tooltip": false,
     "interval": "once",
     "signal": 3,
-    "exec": "~/.config/waybar/scripts/sound-output.sh --icon",
-    "on-click": "~/.config/waybar/scripts/sound-output.sh"
+    "exec": "~/.config/waybar/scripts/sound-output --icon",
+    "on-click": "~/.config/waybar/scripts/sound-output --next"
   },
   "pulseaudio": {
     "format": "{icon}  {volume}%",

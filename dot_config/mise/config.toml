@@ -1,0 +1,13 @@
+[tools]
+elixir = "1.18.4-otp-28"
+erlang = "28.0.4"
+lua = "5.1"
+node = "22.19.0"
+python = "3.11.4"
+gleam = "1.10.0"
+just = "1.42.4"
+neovim = "0.11.5"
+usage = "latest"
+go = "1.24.2"
+chezmoi = "2.62.5"
+
