@@ -31,4 +31,10 @@ alias chzadd="chezmoi add \
   ~/.config/zed \
   ~/.config/mise \
   ~/.config/neovide \
+  ~/.config/satty \
 "
+
+mkfile() {
+  mkdir -p "$(dirname "$1")"
+  touch "$1"
+}
