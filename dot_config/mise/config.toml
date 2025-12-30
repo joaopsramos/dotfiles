@@ -10,4 +10,5 @@ neovim = "0.11.5"
 usage = "latest"
 go = "1.24.2"
 chezmoi = "2.62.5"
+tree-sitter = "latest"
 
