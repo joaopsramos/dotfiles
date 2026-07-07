@@ -1,4 +1,5 @@
 alias nv="nvim"
+alias nvide="neovide </dev/null >/dev/null 2>&1 & disown; exit"
 alias cfgnv="cd ~/.config/nvim && nvim"
 
 alias pacs="sudo pacman -S"
@@ -37,4 +38,8 @@ alias chzadd="chezmoi add \
 mkfile() {
   mkdir -p "$(dirname "$1")"
   touch "$1"
+}
+
+raf() {
+  nohup "$@" > /dev/null 2>&1 &!
 }

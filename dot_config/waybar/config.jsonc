@@ -3,9 +3,23 @@
   "margin-left": -4,
   "margin-right": -4,
   "height": 30,
-  "modules-left": ["hyprland/workspaces", "mpris", "privacy"],
-  "modules-center": ["clock"],
-  "modules-right": ["custom/sound-output", "pulseaudio", "cpu", "memory", "disk", "network"],
+  "modules-left": [
+    "hyprland/workspaces",
+    "mpris",
+    "privacy"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "custom/sound-output",
+    "pulseaudio",
+    "cpu",
+    "memory",
+    "disk",
+    "tray",
+    "network"
+  ],
   "hyprland/workspaces": {
     "format": "{icon}",
     "on-click": "activate",
@@ -21,7 +35,10 @@
   "mpris": {
     "player": "spotify",
     "format": "{player_icon} {dynamic} {status_icon}",
-    "dynamic-order": ["title", "artist"],
+    "dynamic-order": [
+      "title",
+      "artist"
+    ],
     "player-icons": {
       "spotify": "<span color=\"#1db954\">󰓇</span>"
     },
@@ -49,7 +66,11 @@
   },
   "group/spotify": {
     "orientation": "horizontal",
-    "modules": ["custom/spotify-icon", "custom/spotify", "custom/spotify-player"]
+    "modules": [
+      "custom/spotify-icon",
+      "custom/spotify",
+      "custom/spotify-player"
+    ]
   },
   "custom/spotify-icon": {
     "format": "󰓇"
@@ -86,7 +107,11 @@
     "format": "{icon}  {volume}%",
     "format-muted": "󰝟",
     "format-icons": {
-      "default": ["", "", ""]
+      "default": [
+        "",
+        "",
+        ""
+      ]
     },
     "tooltip": false,
     "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
@@ -109,8 +134,24 @@
     },
     "format": "<big>{icon}</big> {capacity}%",
     "format-icons": {
-      "default": ["󱉞", "󰁺", "󰁼", "󰁾", "󰂀", "󰂂", "󰁹"],
-      "charging": ["󰢟", "󰢜", "󰂇", "󰢝", "󰢞", "󰂋", "󰂅"]
+      "default": [
+        "󱉞",
+        "󰁺",
+        "󰁼",
+        "󰁾",
+        "󰂀",
+        "󰂂",
+        "󰁹"
+      ],
+      "charging": [
+        "󰢟",
+        "󰢜",
+        "󰂇",
+        "󰢝",
+        "󰢞",
+        "󰂋",
+        "󰂅"
+      ]
     }
   },
   "disk": {
@@ -125,6 +166,6 @@
     "format-linked": "{ifname} (No IP) 󰒢",
     "format-disconnected": "<big>󰞃</big>",
     "tooltip-format": "{ifname} via {gwaddr} - {signalStrength}%",
-    "tooltip-format-wifi": "{essid}",
+    "tooltip-format-wifi": "{essid}"
   }
 }

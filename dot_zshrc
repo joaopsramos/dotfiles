@@ -54,14 +54,14 @@ export GIT_COMPLETION_CHECKOUT_NO_GUESS=1
 
 export PATH=~/www/fincon:$PATH
 
-go() {
-  if [[ "$1" == "test" ]]; then
-    shift  # Remove "test" from arguments
-    gotestpp "$@"
-  else
-    command go "$@"
-  fi
-}
+# go() {
+#   if [[ "$1" == "test" ]]; then
+#     shift  # Remove "test" from arguments
+#     gotestpp "$@"
+#   else
+#     command go "$@"
+#   fi
+# }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
