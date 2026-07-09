@@ -33,6 +33,7 @@ alias chzadd="chezmoi add \
   ~/.config/mise \
   ~/.config/neovide \
   ~/.config/satty \
+  ~/.config/quickshell \
 "
 
 mkfile() {
