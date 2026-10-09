@@ -24,7 +24,6 @@ alias chzadd="chezmoi add \
   ~/.config/kmonad.kbd \
   ~/.config/picom \
   ~/.config/polybar \
-  ~/.config/rofi \
   ~/.config/spaceship.zsh \
   ~/.config/xborder.json \
   ~/.config/hypr \

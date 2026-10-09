@@ -49,6 +49,14 @@ QtObject {
     readonly property color warning: yellow
     readonly property color error: red
 
+    // Waybar module accents
+    readonly property color volume: mauve
+    readonly property color soundOutput: sapphire
+    readonly property color cpu: peach
+    readonly property color memory: maroon
+    readonly property color disk: teal
+    readonly property color network: pink
+
     // ===== Sizing =====
     readonly property int radius: 8
     readonly property int borderWidth: 1

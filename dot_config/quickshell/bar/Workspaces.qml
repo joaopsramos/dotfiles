@@ -1,9 +1,13 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell.Hyprland
 import qs
 
 BarModuleWrapper {
     id: root
+    verticalPadding: 4
+    mouseEnabled: true
 
     property int persistentWorkspaceCount: 5
 
@@ -23,6 +27,14 @@ BarModuleWrapper {
                 return workspace;
         }
         return null;
+    }
+
+    function activateWorkspace(id) {
+        const workspace = getWorkspace(id)
+        if (workspace) workspace.activate()
+        else Hyprland.dispatch(Hyprland.usingLua
+            ? "hl.dsp.focus({ workspace = " + id + " })"
+            : "workspace " + id)
     }
 
     function getColor(workspace, isFocused, hasWindows) {
@@ -47,12 +59,13 @@ BarModuleWrapper {
 
     Row {
         id: row
-        spacing: 12
+        spacing: 0
 
         Repeater {
             model: root.maxVisibleWorkspaceId()
 
-            Rectangle {
+            Item {
+                id: dot
                 required property int index
 
                 property int workspaceId: index + 1
@@ -60,20 +73,36 @@ BarModuleWrapper {
                 property bool isFocused: Hyprland.focusedWorkspace?.id === workspaceId
                 property bool hasWindows: workspace?.toplevels.values.length > 0
 
-                width: 10
-                height: 10
-                radius: 5
+                width: 22
+                height: 26
 
-                color: getColor(workspace, isFocused, hasWindows)
-
-                border {
-                    width: 2
-                    color: getBorderColor(workspace, isFocused, hasWindows)
-                }
-
-                MouseArea {
+                Rectangle {
                     anchors.fill: parent
-                    onClicked: Hyprland.dispatch("workspace " + parent.workspaceId)
+                    radius: 6
+                    color: Theme.mantle
+                    opacity: dotMouse.containsMouse ? 1 : 0
+                    Behavior on opacity { NumberAnimation { duration: 100 } }
+                }
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: 10
+                    height: 10
+                    radius: 5
+                    color: {
+                        const fill = root.getColor(dot.workspace, dot.isFocused, dot.hasWindows)
+                        return dotMouse.containsMouse && (dot.isFocused || dot.workspace?.urgent)
+                            ? Qt.darker(fill, 1.2) : fill
+                    }
+                    border.width: 2
+                    border.color: root.getBorderColor(dot.workspace, dot.isFocused, dot.hasWindows)
+                }
+                MouseArea {
+                    id: dotMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    acceptedButtons: Qt.LeftButton
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.activateWorkspace(dot.workspaceId)
                 }
             }
         }

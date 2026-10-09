@@ -17,6 +17,7 @@
     "cpu",
     "memory",
     "disk",
+    "battery",
     "tray",
     "network"
   ],
@@ -166,6 +167,7 @@
     "format-linked": "{ifname} (No IP) 󰒢",
     "format-disconnected": "<big>󰞃</big>",
     "tooltip-format": "{ifname} via {gwaddr} - {signalStrength}%",
-    "tooltip-format-wifi": "{essid}"
+    "tooltip-format-wifi": "{essid}",
+    "on-click": "kitty nmtui"
   }
 }
