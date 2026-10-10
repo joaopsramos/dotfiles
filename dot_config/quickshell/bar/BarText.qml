@@ -3,6 +3,6 @@ import qs
 
 Text {
     font.family: Theme.fontFamily
-    font.pixelSize: 16
+    font.pixelSize: Theme.barFontSize
     color: Theme.text
 }

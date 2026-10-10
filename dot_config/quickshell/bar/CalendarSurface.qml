@@ -44,35 +44,50 @@ Shape {
             controlX: surface.neckLeft
             controlY: surface.curve
         }
-        PathLine { x: surface.inset + surface.leftCorner; y: surface.curve }
+        PathLine {
+            x: surface.inset + surface.leftCorner
+            y: surface.curve
+        }
         PathQuad {
             x: surface.inset
             y: surface.curve + surface.leftCorner
             controlX: surface.inset
             controlY: surface.curve
         }
-        PathLine { x: surface.inset; y: surface.bottomEdge - surface.bottomCorner }
+        PathLine {
+            x: surface.inset
+            y: surface.bottomEdge - surface.bottomCorner
+        }
         PathQuad {
             x: surface.inset + surface.bottomCorner
             y: surface.bottomEdge
             controlX: surface.inset
             controlY: surface.bottomEdge
         }
-        PathLine { x: surface.rightEdge - surface.bottomCorner; y: surface.bottomEdge }
+        PathLine {
+            x: surface.rightEdge - surface.bottomCorner
+            y: surface.bottomEdge
+        }
         PathQuad {
             x: surface.rightEdge
             y: surface.bottomEdge - surface.bottomCorner
             controlX: surface.rightEdge
             controlY: surface.bottomEdge
         }
-        PathLine { x: surface.rightEdge; y: surface.curve + surface.rightCorner }
+        PathLine {
+            x: surface.rightEdge
+            y: surface.curve + surface.rightCorner
+        }
         PathQuad {
             x: surface.rightEdge - surface.rightCorner
             y: surface.curve
             controlX: surface.rightEdge
             controlY: surface.curve
         }
-        PathLine { x: surface.neckRight + surface.rightCurve; y: surface.curve }
+        PathLine {
+            x: surface.neckRight + surface.rightCurve
+            y: surface.curve
+        }
         PathQuad {
             x: surface.neckRight
             y: 0

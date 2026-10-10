@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 
 
 def nmcli(*args, wait=8):
@@ -62,11 +63,23 @@ def snapshot():
     current = next((row for row in devices if row[2] == "connected" and row[1] in ("wifi", "ethernet")), None)
     device = wifi[0] if wifi else ""
     profiles = []
+    try:
+        cached_profiles = json.loads(os.environ.get("QUICKSHELL_NETWORK_PROFILES", "[]"))
+        cached = {profile["uuid"]: profile for profile in cached_profiles}
+    except (ValueError, KeyError, TypeError):
+        cached = {}
+    now = time.time()
     for name, uuid, kind, interface in rows("--fields", "NAME,UUID,TYPE,DEVICE", "connection", "show"):
         if kind not in ("802-11-wireless", "wifi", "802-3-ethernet", "ethernet"):
             continue
         ssid = ""
-        if kind in ("802-11-wireless", "wifi"):
+        fetched_at = now
+        previous = cached.get(uuid, {})
+        if (kind in ("802-11-wireless", "wifi") and previous.get("name") == name
+                and 0 <= now - previous.get("fetchedAt", 0) < 60):
+            ssid = previous["ssid"]
+            fetched_at = previous["fetchedAt"]
+        elif kind in ("802-11-wireless", "wifi"):
             try:
                 ssid = fields(nmcli("--get-values", "802-11-wireless.ssid", "connection", "show", "uuid", uuid))[0]
             except RuntimeError:
@@ -75,7 +88,11 @@ def snapshot():
                 continue
         profiles.append({"name": name, "uuid": uuid, "ssid": ssid,
                          "wifi": kind in ("802-11-wireless", "wifi"),
-                         "active": interface not in ("", "--")})
+                         "active": interface not in ("", "--"), "fetchedAt": fetched_at})
+    profile_uuids = {}
+    for profile in profiles:
+        if profile["wifi"]:
+            profile_uuids.setdefault(profile["ssid"], profile["uuid"])
     networks = {}
     if enabled and device:
         for active, ssid, signal, security in rows("--fields", "IN-USE,SSID,SIGNAL,SECURITY",
@@ -83,7 +100,7 @@ def snapshot():
             if not ssid:
                 continue
             entry = {"ssid": ssid, "signal": int(signal or 0), "security": security,
-                     "active": active == "*", "uuid": next((p["uuid"] for p in profiles if p["ssid"] == ssid), "")}
+                     "active": active == "*", "uuid": profile_uuids.get(ssid, "")}
             previous = networks.get(ssid)
             if previous is None or (entry["active"], entry["signal"]) > (previous["active"], previous["signal"]):
                 networks[ssid] = entry

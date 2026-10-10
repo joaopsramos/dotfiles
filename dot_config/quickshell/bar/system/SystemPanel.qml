@@ -10,8 +10,8 @@ Column {
             memory: {},
             gpus: []
         })
-    property real cpuFallback: 0
-    property real memoryFallback: 0
+    property var cpuFallback: null
+    property var memoryFallback: null
     property string error: ""
     readonly property var cpu: snapshot.cpu || ({})
     readonly property var memory: snapshot.memory || ({})
@@ -21,11 +21,11 @@ Column {
 
     function size(bytes) {
         if (bytes == null)
-            return "—";
-        return bytes >= 1073741824 ? (bytes / 1073741824).toFixed(1) + " GiB" : Math.round(bytes / 1048576) + " MiB";
+            return "—"
+        return bytes >= 1073741824 ? (bytes / 1073741824).toFixed(1) + " GiB" : Math.round(bytes / 1048576) + " MiB"
     }
     function temperature(value) {
-        return value == null ? "Unavailable" : Math.round(value) + "°C";
+        return value == null ? "Unavailable" : Math.round(value) + "°C"
     }
 
     Column {
@@ -38,7 +38,7 @@ Column {
                 text: "System"
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 15
+                font.pixelSize: Theme.headingFontSize
                 font.weight: Font.DemiBold
             }
         }
@@ -49,7 +49,7 @@ Column {
             color: Theme.subtext0
             elide: Text.ElideRight
             font.family: Theme.fontFamily
-            font.pixelSize: 12
+            font.pixelSize: Theme.bodyFontSize
         }
     }
 
@@ -81,7 +81,7 @@ Column {
                 elide: Text.ElideRight
                 color: Theme.subtext0
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: Theme.bodyFontSize
             }
         }
         Rectangle {
@@ -92,7 +92,8 @@ Column {
             UsageGauge {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 4
-                value: root.cpu.usage ?? root.cpuFallback
+                value: root.cpu.usage ?? root.cpuFallback ?? 0
+                available: root.cpu.usage != null || root.cpuFallback != null
                 label: "CPU"
                 accent: Theme.cpu
             }
@@ -102,7 +103,7 @@ Column {
                 text: " " + root.temperature(root.cpu.temperature) + (root.cpu.frequency != null ? " · " + root.cpu.frequency.toFixed(1) + " GHz" : "")
                 color: root.cpu.temperature >= 85 ? Theme.red : Theme.subtext0
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: Theme.bodyFontSize
             }
         }
         Rectangle {
@@ -113,7 +114,8 @@ Column {
             UsageGauge {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 4
-                value: root.memory.usage ?? root.memoryFallback
+                value: root.memory.usage ?? root.memoryFallback ?? 0
+                available: root.memory.usage != null || root.memoryFallback != null
                 label: "RAM"
                 accent: Theme.memory
             }
@@ -123,7 +125,7 @@ Column {
                 text: root.size(root.memory.used) + " / " + root.size(root.memory.total)
                 color: Theme.subtext0
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: Theme.bodyFontSize
             }
         }
     }
@@ -141,18 +143,18 @@ Column {
                 x: 12
                 y: 12
                 width: parent.width - 24
-                spacing: 8
+                spacing: Theme.spacing
                 Text {
                     text: "Thread activity"
                     color: Theme.subtext0
                     font.family: Theme.fontFamily
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.fontSize
                 }
                 Text {
                     text: root.cpu.threads ? (root.cpu.cores ? root.cpu.cores + " cores · " : "") + root.cpu.threads + " threads" : ""
                     color: Theme.overlay1
                     font.family: Theme.fontFamily
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.bodyFontSize
                 }
                 Grid {
                     id: threadGrid
@@ -176,7 +178,7 @@ Column {
                                 opacity: 0.4
                                 Behavior on height {
                                     NumberAnimation {
-                                        duration: 350
+                                        duration: Theme.slowAnimation
                                     }
                                 }
                             }
@@ -240,7 +242,7 @@ Column {
         wrapMode: Text.Wrap
         color: Theme.red
         font.family: Theme.fontFamily
-        font.pixelSize: 11
+        font.pixelSize: Theme.smallFontSize
     }
 
     component Metric: Column {
@@ -256,7 +258,7 @@ Column {
             horizontalAlignment: parent.alignRight ? Text.AlignRight : Text.AlignLeft
             color: Theme.subtext0
             font.family: Theme.fontFamily
-            font.pixelSize: 12
+            font.pixelSize: Theme.bodyFontSize
         }
         Text {
             width: parent.width

@@ -23,11 +23,18 @@ Column {
         return Math.floor(value / 60) + ":" + String(value % 60).padStart(2, "0")
     }
     onPlayerChanged: syncPosition()
-    onActiveChanged: { if (active) syncPosition() }
+    onActiveChanged: {
+        if (active)
+            syncPosition()
+    }
     Connections {
         target: root.player
-        function onPositionChanged() { root.syncPosition() }
-        function onMetadataChanged() { root.syncPosition() }
+        function onPositionChanged() {
+            root.syncPosition()
+        }
+        function onMetadataChanged() {
+            root.syncPosition()
+        }
     }
     Timer {
         interval: 1000
@@ -38,7 +45,7 @@ Column {
 
     Row {
         width: parent.width
-        spacing: 8
+        spacing: Theme.spacing
         Text {
             text: "󰓇"
             color: Theme.green
@@ -49,16 +56,16 @@ Column {
             text: "Spotify"
             color: Theme.subtext0
             font.family: Theme.fontFamily
-            font.pixelSize: 12
+            font.pixelSize: Theme.bodyFontSize
             anchors.verticalCenter: parent.verticalCenter
         }
-
     }
     Row {
         width: parent.width
         spacing: 18
         Item {
-            width: 144; height: 144
+            width: 144
+            height: 144
             Rectangle {
                 anchors.fill: parent
                 radius: 72
@@ -79,8 +86,10 @@ Column {
                         const radius = 66 + 4 * Math.cos(9 * angle)
                         const x = width / 2 + radius * Math.cos(angle)
                         const y = height / 2 + radius * Math.sin(angle)
-                        if (i === 0) ctx.moveTo(x, y)
-                        else ctx.lineTo(x, y)
+                        if (i === 0)
+                            ctx.moveTo(x, y)
+                        else
+                            ctx.lineTo(x, y)
                     }
                     ctx.closePath()
                     ctx.fill()
@@ -95,7 +104,10 @@ Column {
                     maskThresholdMin: 0.5
                     maskSpreadAtMin: 1.0
                 }
-                Rectangle { anchors.fill: parent; color: Theme.mantle }
+                Rectangle {
+                    anchors.fill: parent
+                    color: Theme.mantle
+                }
                 Text {
                     anchors.centerIn: parent
                     text: "󰓇"
@@ -118,7 +130,7 @@ Column {
         Column {
             width: parent.width - 162
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 8
+            spacing: Theme.spacing
             Text {
                 width: parent.width
                 text: root.player?.trackTitle || "Nothing playing"
@@ -140,7 +152,7 @@ Column {
                 elide: Text.ElideRight
                 color: Theme.subtext0
                 font.family: Theme.fontFamily
-                font.pixelSize: 13
+                font.pixelSize: Theme.fontSize
             }
             Text {
                 width: parent.width
@@ -149,7 +161,7 @@ Column {
                 elide: Text.ElideRight
                 color: Theme.overlay1
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: Theme.smallFontSize
             }
         }
     }
@@ -173,7 +185,8 @@ Column {
             onMoved: seekPosition = value
             enabled: !!root.player?.canSeek
             onPressedChanged: {
-                if (pressed) seekPosition = value
+                if (pressed)
+                    seekPosition = value
                 else if (root.player?.canSeek) {
                     root.player.position = seekPosition
                     root.syncPosition()
@@ -196,7 +209,8 @@ Column {
             handle: Rectangle {
                 x: progress.leftPadding + progress.visualPosition * (progress.availableWidth - width)
                 y: (progress.height - height) / 2
-                width: 12; height: 12
+                width: 12
+                height: 12
                 radius: 6
                 color: progress.pressed ? Theme.text : Theme.green
             }
@@ -209,60 +223,66 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: progress.visible
                 text: root.timeLabel(progress.pressed ? progress.value : root.playbackPosition)
-                color: Theme.subtext0; font.family: Theme.fontFamily; font.pixelSize: 11
+                color: Theme.subtext0
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.smallFontSize
             }
             Text {
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 visible: progress.visible
                 text: "−" + root.timeLabel(root.duration - (progress.pressed ? progress.value : root.playbackPosition))
-                color: Theme.subtext0; font.family: Theme.fontFamily; font.pixelSize: 11
+                color: Theme.subtext0
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.smallFontSize
             }
-        Row {
-            id: playbackControls
-            anchors.centerIn: parent
-            spacing: 8
-            PlaybackButton {
-                text: "󰒟"
-                highlighted: !!root.player?.shuffle
-                enabled: !!root.player?.shuffleSupported
-                onClicked: root.player.shuffle = !root.player.shuffle
-                hint: "Shuffle"
-            }
-            PlaybackButton {
-                symbol: "previous"
-                enabled: !!root.player?.canGoPrevious
-                onClicked: root.player.previous()
-            }
-            PlaybackButton {
-                symbol: root.player?.isPlaying ? "pause" : "play"
-                prominent: true
-                enabled: !!root.player?.canTogglePlaying
-                onClicked: root.player.togglePlaying()
-            }
-            PlaybackButton {
-                symbol: "next"
-                enabled: !!root.player?.canGoNext
-                onClicked: root.player.next()
-            }
-            PlaybackButton {
-                text: root.player?.loopState === MprisLoopState.Track ? "󰑘" : "󰑖"
-                highlighted: !!root.player && root.player.loopState !== MprisLoopState.None
-                enabled: !!root.player?.loopSupported
-                onClicked: {
-                    const current = root.player.loopState
-                    root.player.loopState = current === MprisLoopState.None ? MprisLoopState.Playlist
-                        : current === MprisLoopState.Playlist ? MprisLoopState.Track : MprisLoopState.None
+            Row {
+                id: playbackControls
+                anchors.centerIn: parent
+                spacing: Theme.spacing
+                PlaybackButton {
+                    text: "󰒟"
+                    highlighted: !!root.player?.shuffle
+                    enabled: !!root.player?.shuffleSupported
+                    onClicked: root.player.shuffle = !root.player.shuffle
+                    hint: "Shuffle"
                 }
-                hint: root.player?.loopState === MprisLoopState.Track ? "Repeat track"
-                    : root.player?.loopState === MprisLoopState.Playlist ? "Repeat playlist" : "Repeat off"
+                PlaybackButton {
+                    symbol: "previous"
+                    enabled: !!root.player?.canGoPrevious
+                    onClicked: root.player.previous()
+                }
+                PlaybackButton {
+                    symbol: root.player?.isPlaying ? "pause" : "play"
+                    prominent: true
+                    enabled: !!root.player?.canTogglePlaying
+                    onClicked: root.player.togglePlaying()
+                }
+                PlaybackButton {
+                    symbol: "next"
+                    enabled: !!root.player?.canGoNext
+                    onClicked: root.player.next()
+                }
+                PlaybackButton {
+                    text: root.player?.loopState === MprisLoopState.Track ? "󰑘" : "󰑖"
+                    highlighted: !!root.player && root.player.loopState !== MprisLoopState.None
+                    enabled: !!root.player?.loopSupported
+                    onClicked: {
+                        const current = root.player.loopState
+                        root.player.loopState = current === MprisLoopState.None ? MprisLoopState.Playlist : current === MprisLoopState.Playlist ? MprisLoopState.Track : MprisLoopState.None
+                    }
+                    hint: root.player?.loopState === MprisLoopState.Track ? "Repeat track" : root.player?.loopState === MprisLoopState.Playlist ? "Repeat playlist" : "Repeat off"
+                }
             }
-        }
         }
     }
 
     component PlaybackButton: Button {
         id: button
+        HoverHandler {
+            enabled: button.enabled
+            cursorShape: Qt.PointingHandCursor
+        }
         property bool prominent: false
         property string symbol: ""
         property string hint: ""
@@ -281,7 +301,7 @@ Column {
                 text: tooltip.text
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: Theme.smallFontSize
             }
             background: Rectangle {
                 color: Theme.mantle
@@ -297,38 +317,34 @@ Column {
             Text {
                 anchors.fill: parent
                 visible: button.symbol === ""
-                transform: Translate { x: -2 }
+                transform: Translate {
+                    x: -2
+                }
                 text: button.text
                 color: button.highlighted ? Theme.green : Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 16
+                font.pixelSize: Theme.barFontSize
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
             Shape {
                 anchors.centerIn: parent
-                width: 18; height: 18
+                width: 18
+                height: 18
                 visible: button.symbol !== ""
                 preferredRendererType: Shape.CurveRenderer
                 ShapePath {
                     strokeWidth: -1
                     fillColor: button.prominent ? Theme.base : Theme.text
                     PathSvg {
-                        path: button.symbol === "previous"
-                            ? "M 2 3 H 4 V 15 H 2 Z M 16 3 L 5 9 L 16 15 Z"
-                            : button.symbol === "next"
-                            ? "M 14 3 H 16 V 15 H 14 Z M 2 3 L 13 9 L 2 15 Z"
-                            : button.symbol === "pause"
-                            ? "M 3 3 H 7 V 15 H 3 Z M 11 3 H 15 V 15 H 11 Z"
-                            : "M 5 2 L 16 9 L 5 16 Z"
+                        path: button.symbol === "previous" ? "M 2 3 H 4 V 15 H 2 Z M 16 3 L 5 9 L 16 15 Z" : button.symbol === "next" ? "M 14 3 H 16 V 15 H 14 Z M 2 3 L 13 9 L 2 15 Z" : button.symbol === "pause" ? "M 3 3 H 7 V 15 H 3 Z M 11 3 H 15 V 15 H 11 Z" : "M 5 2 L 16 9 L 5 16 Z"
                     }
                 }
             }
         }
         background: Rectangle {
             radius: height / 2
-            color: button.prominent ? (button.hovered ? Qt.lighter(Theme.green, 1.1) : Theme.green)
-                : button.hovered ? Theme.surface0 : button.highlighted ? Qt.alpha(Theme.green, 0.12) : "transparent"
+            color: button.prominent ? (button.hovered ? Qt.lighter(Theme.green, 1.1) : Theme.green) : button.hovered ? Theme.surface0 : button.highlighted ? Qt.alpha(Theme.green, 0.12) : "transparent"
             border.width: 0
         }
     }

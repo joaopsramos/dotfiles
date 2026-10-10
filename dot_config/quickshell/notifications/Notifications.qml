@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import qs
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -18,7 +19,9 @@ Scope {
         running: true
         // Quickshell's qmltypes omit QProcess::ExitStatus.
         // qmllint disable signal-handler-parameters
-        onExited: () => { root.ready = true }
+        onExited: () => {
+            root.ready = true
+        }
         // qmllint enable signal-handler-parameters
     }
     Loader {
@@ -49,18 +52,24 @@ Scope {
         // Quickshell creates PanelWindow at runtime despite its qmltypes annotation.
         // qmllint disable uncreatable-type
         PanelWindow {
-        // qmllint enable uncreatable-type
+            // qmllint enable uncreatable-type
             id: window
             required property var modelData
             screen: modelData
-            readonly property var entries: root.service
-                ? root.service.entries.filter(entry => entry.screenName === modelData.name) : []
+            readonly property var entries: root.service ? root.service.entries.filter(entry => entry.screenName === modelData.name) : []
             visible: entries.length > 0 && !root.historyScreens.includes(modelData.name)
             color: "transparent"
-            anchors { top: true; right: true }
+            anchors {
+                top: true
+                right: true
+            }
             // The installed Quickshell qmltypes omit the Margins value type.
             // qmllint disable unqualified unresolved-type
-            margins { top: 54; right: 10; bottom: 10 }
+            margins {
+                top: 54
+                right: 10
+                bottom: 10
+            }
             // qmllint enable unqualified unresolved-type
             implicitWidth: 360
             // Keep the Wayland surface stable while cards animate inside it.
@@ -70,10 +79,16 @@ Scope {
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.namespace: "quickshell-notifications"
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-            mask: Region { item: stack }
+            mask: Region {
+                item: stack
+            }
 
             Flickable {
-                anchors { top: parent.top; left: parent.left; right: parent.right }
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                }
                 height: Math.min(stack.implicitHeight, parent.height)
                 contentHeight: stack.implicitHeight
                 clip: true
@@ -81,14 +96,20 @@ Scope {
                 Column {
                     id: stack
                     width: parent.width
-                    spacing: 8
+                    spacing: Theme.spacing
                     move: Transition {
-                        NumberAnimation { properties: "y"; duration: 140; easing.type: Easing.OutCubic }
+                        NumberAnimation {
+                            properties: "y"
+                            duration: Theme.fastAnimation
+                            easing.type: Easing.OutCubic
+                        }
                     }
                     Repeater {
                         // Preserve each card when another entry is inserted or removed.
                         // A plain array resets the Repeater and replays every entrance.
-                        model: ScriptModel { values: window.entries }
+                        model: ScriptModel {
+                            values: window.entries
+                        }
                         NotificationCard {
                             required property NotificationEntry modelData
                             entry: modelData

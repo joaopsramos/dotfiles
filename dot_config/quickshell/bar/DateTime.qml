@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Shapes
 import qs
 
 Item {
@@ -17,20 +16,12 @@ Item {
     implicitWidth: clockModule.implicitWidth
     implicitHeight: clockModule.implicitHeight
 
-    Timer {
-        id: openDelay
-        interval: 150
-        onTriggered: {
-            root.calendarOpen = true
-        }
-    }
-    Timer {
-        id: closeDelay
-        interval: 300
-        onTriggered: {
-            if (!clockModule.containsMouse && !popupClient.hovered)
-                root.calendarOpen = false
-        }
+    PopupHover {
+        triggerHovered: clockModule.containsMouse
+        popupHovered: popupClient.hovered
+        available: !!root.parentWindow && root.visible
+        onOpenRequested: root.calendarOpen = true
+        onCloseRequested: root.calendarOpen = false
     }
 
     BarModuleWrapper {
@@ -42,13 +33,11 @@ Item {
         mouseEnabled: true
         acceptedButtons: Qt.LeftButton
         hoverEnabled: true
-        onEntered: { closeDelay.stop(); openDelay.restart() }
-        onExited: { openDelay.stop(); closeDelay.restart() }
         onClicked: root.onlyTime = !root.onlyTime
 
         Item {
             implicitWidth: clockText.implicitWidth + (Theme.padding + 2) * 2
-            implicitHeight: root.parentWindow ? root.parentWindow.height : 34
+            implicitHeight: root.parentWindow ? root.parentWindow.height : Theme.barHeight
 
             Rectangle {
                 visible: !root.calendarVisible
@@ -59,28 +48,9 @@ Item {
                 radius: Theme.radius
             }
 
-            Shape {
-                id: clockFrame
+            PopupFrame {
                 anchors.fill: parent
                 visible: root.calendarVisible
-                preferredRendererType: Shape.CurveRenderer
-
-                ShapePath {
-                    fillColor: Theme.base
-                    strokeColor: Theme.surface1
-                    strokeWidth: Theme.borderWidth
-                    capStyle: ShapePath.FlatCap
-                    // Leave the bottom open so its outline continues into the calendar.
-                    PathSvg {
-                        path: "M 0.5 " + clockFrame.height
-                            + " L 0.5 " + (Theme.radius + 0.5)
-                            + " Q 0.5 0.5 " + (Theme.radius + 0.5) + " 0.5"
-                            + " L " + (clockFrame.width - Theme.radius - 0.5) + " 0.5"
-                            + " Q " + (clockFrame.width - 0.5) + " 0.5 "
-                            + (clockFrame.width - 0.5) + " " + (Theme.radius + 0.5)
-                            + " L " + (clockFrame.width - 0.5) + " " + clockFrame.height
-                    }
-                }
             }
 
             BarText {
@@ -100,7 +70,8 @@ Item {
         grabFocus: true
         contentItem: calendarContent
         onDismissed: root.calendarOpen = false
-        onHoveredChanged: { if (hovered) closeDelay.stop(); else closeDelay.restart() }
-        CalendarPanel { id: calendarContent }
+        CalendarPanel {
+            id: calendarContent
+        }
     }
 }

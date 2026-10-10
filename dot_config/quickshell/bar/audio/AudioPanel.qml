@@ -1,24 +1,87 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import Quickshell
 import Quickshell.Services.Pipewire
 import qs
+import qs.services as Services
 
 Column {
     id: root
-    property var sink: Pipewire.defaultAudioSink
-    property var source: Pipewire.defaultAudioSource
-    property var outputs: Pipewire.nodes.values.filter(node => node.audio && node.isSink && !node.isStream)
-    property var inputs: Pipewire.nodes.values.filter(node => node.audio && !node.isSink && !node.isStream)
-    signal settings()
+    readonly property var sink: Services.Audio.sink
+    readonly property var source: Services.Audio.source
+    readonly property var outputs: Services.Audio.devices.filter(node => node.isSink)
+    readonly property var inputs: Services.Audio.devices.filter(node => !node.isSink)
+    signal settings
     spacing: 12
 
-    Text { text: "Audio"; color: Theme.text; font.family: Theme.fontFamily; font.pixelSize: 15; font.weight: Font.DemiBold }
-    AudioLevel { width: parent.width; node: root.sink; label: "Output" }
-    Rectangle { width: parent.width; height: 1; color: Theme.surface0 }
-    Text { text: "Output device"; color: Theme.subtext0; font.family: Theme.fontFamily; font.pixelSize: 11 }
+    Text {
+        text: "Audio"
+        color: Theme.text
+        font.family: Theme.fontFamily
+        font.pixelSize: Theme.headingFontSize
+        font.weight: Font.DemiBold
+    }
+    AudioLevel {
+        width: parent.width
+        node: root.sink
+        label: "Output"
+    }
+    Column {
+        width: parent.width
+        spacing: 10
+        visible: Services.Audio.playbackNodes.length > 0
+        Text {
+            text: "Applications"
+            color: Theme.subtext0
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.smallFontSize
+        }
+        Flickable {
+            width: parent.width
+            height: Math.min(contentHeight, 220)
+            contentHeight: applications.height
+            contentWidth: width
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            Column {
+                id: applications
+                width: parent.width
+                spacing: 12
+                Repeater {
+                    model: ScriptModel {
+                        values: Services.Audio.playbackNodes
+                        objectProp: "id"
+                    }
+                    delegate: AudioLevel {
+                        required property var modelData
+                        width: applications.width
+                        node: modelData
+                        label: modelData.properties["application.name"] || modelData.description || modelData.name || "Unknown application"
+                        showDescription: false
+                        showIcon: true
+                        iconSource: Services.Audio.applicationIcon(modelData)
+                    }
+                }
+            }
+        }
+    }
+    Rectangle {
+        width: parent.width
+        height: 1
+        color: Theme.surface0
+    }
+    Text {
+        text: "Output device"
+        color: Theme.subtext0
+        font.family: Theme.fontFamily
+        font.pixelSize: Theme.smallFontSize
+    }
     Repeater {
-        model: root.outputs
+        model: ScriptModel {
+            values: root.outputs
+            objectProp: "id"
+        }
         delegate: DeviceRow {
             required property var modelData
             width: root.width
@@ -30,16 +93,30 @@ Column {
     Text {
         visible: root.outputs.length === 0
         text: "No output devices"
-        color: Theme.subtext0; font.family: Theme.fontFamily; font.pixelSize: 11
+        color: Theme.subtext0
+        font.family: Theme.fontFamily
+        font.pixelSize: Theme.smallFontSize
     }
-    Rectangle { width: parent.width; height: 1; color: Theme.surface0 }
-    AudioLevel { width: parent.width; node: root.source; label: "Microphone"; accent: Theme.sapphire }
+    Rectangle {
+        width: parent.width
+        height: 1
+        color: Theme.surface0
+    }
+    AudioLevel {
+        width: parent.width
+        node: root.source
+        label: "Microphone"
+        accent: Theme.sapphire
+    }
     Column {
         width: parent.width
         spacing: 4
         visible: root.inputs.length > 1
         Repeater {
-            model: root.inputs
+            model: ScriptModel {
+                values: root.inputs
+                objectProp: "id"
+            }
             delegate: DeviceRow {
                 required property var modelData
                 width: root.width
@@ -49,13 +126,16 @@ Column {
             }
         }
     }
-    AudioButton { text: "Audio settings"; onClicked: root.settings() }
+    AudioButton {
+        text: "Audio settings"
+        onClicked: root.settings()
+    }
 
     component DeviceRow: Rectangle {
         id: device
         property var node
         property bool selected: false
-        signal clicked()
+        signal clicked
         height: 38
         radius: 7
         color: selected ? Theme.surface0 : mouse.containsMouse ? Theme.mantle : "transparent"
@@ -68,14 +148,16 @@ Column {
             elide: Text.ElideRight
             color: Theme.text
             font.family: Theme.fontFamily
-            font.pixelSize: 11
+            font.pixelSize: Theme.smallFontSize
         }
         Text {
-            anchors.right: parent.right; anchors.rightMargin: 10
+            anchors.right: parent.right
+            anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
             text: device.selected ? "✓" : ""
             color: Theme.green
-            font.family: Theme.fontFamily; font.pixelSize: 12
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.bodyFontSize
         }
         MouseArea {
             id: mouse

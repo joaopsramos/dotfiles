@@ -1,32 +1,15 @@
 pragma Singleton
 
 import Quickshell
-import QtQuick
 
 Singleton {
-    id: root
-
-    readonly property string date: clock.date
+    readonly property date date: clock.date
+    readonly property int year: date.getFullYear()
+    readonly property int month: date.getMonth()
+    readonly property int day: date.getDate()
 
     SystemClock {
         id: clock
-        precision: SystemClock.Seconds
+        precision: SystemClock.Minutes
     }
-
-    // Process {
-    //     id: dateProc
-    //     command: ["date"]
-    //     running: true
-    //
-    //     stdout: StdioCollector {
-    //         onStreamFinished: root.time = this.text
-    //     }
-    // }
-    //
-    // Timer {
-    //     interval: 1000
-    //     running: true
-    //     repeat: true
-    //     onTriggered: dateProc.running = true
-    // }
 }

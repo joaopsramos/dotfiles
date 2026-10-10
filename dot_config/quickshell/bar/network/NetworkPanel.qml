@@ -7,7 +7,19 @@ import qs
 
 Item {
     id: root
-    property var network: ({ enabled: false, device: "", current: { name: "Not connected", kind: "down", address: "", gateway: "", signal: -1 }, networks: [], profiles: [] })
+    property var network: ({
+            enabled: false,
+            device: "",
+            current: {
+                name: "Not connected",
+                kind: "down",
+                address: "",
+                gateway: "",
+                signal: -1
+            },
+            networks: [],
+            profiles: []
+        })
     property string error: ""
     property bool networkReady: true
     property bool savedView: false
@@ -19,8 +31,8 @@ Item {
     property var failedSsids: []
     property string passwordSsid: ""
     signal joinNetwork(var entry, string password)
-    signal settings()
-    signal focusPassword()
+    signal settings
+    signal focusPassword
     Timer {
         id: passwordFocusDelay
         interval: 150
@@ -49,7 +61,7 @@ Item {
                 text: "Wi-Fi"
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 15
+                font.pixelSize: Theme.headingFontSize
                 font.weight: Font.DemiBold
                 verticalAlignment: Text.AlignVCenter
             }
@@ -71,10 +83,15 @@ Item {
             radius: 8
             color: Theme.mantle
             opacity: root.connectingUuids.length > 0 || root.connectingSsid !== "" ? 0.55 : 1
-            Behavior on opacity { NumberAnimation { duration: 120 } }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 120
+                }
+            }
             Column {
                 id: details
-                x: 10; y: 10
+                x: 10
+                y: 10
                 width: parent.width - 20
                 spacing: 5
                 Text {
@@ -84,18 +101,16 @@ Item {
                     elide: Text.ElideRight
                     color: Theme.network
                     font.family: Theme.fontFamily
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.fontSize
                 }
                 Text {
                     width: parent.width
-                    text: root.network.current.kind === "down"
-                        ? (root.network.enabled ? "Wi-Fi is on" : "Wi-Fi is off")
-                        : root.network.current.device + (root.network.current.signal >= 0 ? "  ·  " + root.network.current.signal + "% signal" : "  ·  Ethernet")
+                    text: root.network.current.kind === "down" ? (root.network.enabled ? "Wi-Fi is on" : "Wi-Fi is off") : root.network.current.device + (root.network.current.signal >= 0 ? "  ·  " + root.network.current.signal + "% signal" : "  ·  Ethernet")
                     textFormat: Text.PlainText
                     elide: Text.ElideRight
                     color: Theme.subtext0
                     font.family: Theme.fontFamily
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.smallFontSize
                 }
                 Text {
                     visible: root.network.current.address !== ""
@@ -105,7 +120,7 @@ Item {
                     elide: Text.ElideRight
                     color: Theme.subtext0
                     font.family: Theme.fontFamily
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.smallFontSize
                 }
                 Text {
                     visible: root.network.current.gateway !== ""
@@ -115,7 +130,7 @@ Item {
                     elide: Text.ElideRight
                     color: Theme.subtext0
                     font.family: Theme.fontFamily
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.smallFontSize
                 }
             }
         }
@@ -133,7 +148,10 @@ Item {
                 text: "Saved"
                 selected: root.savedView
                 textColor: root.savedView ? Theme.mauve : Theme.subtext0
-                onClicked: { root.passwordSsid = ""; root.savedView = true }
+                onClicked: {
+                    root.passwordSsid = ""
+                    root.savedView = true
+                }
             }
         }
 
@@ -152,9 +170,7 @@ Item {
                     id: entry
                     required property var modelData
                     required property int index
-                    readonly property bool connecting: !modelData.active &&
-                        ((modelData.uuid && root.connectingUuids.includes(modelData.uuid)) ||
-                         (!root.savedView && root.connectingSsid !== "" && root.connectingSsid === modelData.ssid))
+                    readonly property bool connecting: !modelData.active && ((modelData.uuid && root.connectingUuids.includes(modelData.uuid)) || (!root.savedView && root.connectingSsid !== "" && root.connectingSsid === modelData.ssid))
                     Connections {
                         target: root
                         function onFocusPassword() {
@@ -172,26 +188,30 @@ Item {
                         color: entry.modelData.active ? Theme.surface0 : entry.expanded || entryMouse.containsMouse ? Theme.mantle : "transparent"
                     }
                     opacity: connecting ? 0.55 : 1
-                    Behavior on opacity { NumberAnimation { duration: 120 } }
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: 120
+                        }
+                    }
                     Text {
-                        x: 9; y: 6
+                        x: 9
+                        y: 6
                         width: parent.width - 125
                         text: root.savedView ? entry.modelData.name : entry.modelData.ssid
                         textFormat: Text.PlainText
                         elide: Text.ElideRight
                         color: Theme.text
                         font.family: Theme.fontFamily
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.bodyFontSize
                     }
                     Text {
-                        x: 9; y: 26
+                        x: 9
+                        y: 26
                         width: parent.width - 125
-                        text: entry.connecting ? "Connecting…" : entry.modelData.active ? "Connected" : root.savedView
-                            ? (entry.modelData.wifi ? "Saved Wi-Fi" : "Ethernet")
-                            : (entry.modelData.security && entry.modelData.security !== "--" ? entry.modelData.security : "Open") + "  ·  " + entry.modelData.signal + "%"
+                        text: entry.connecting ? "Connecting…" : entry.modelData.active ? "Connected" : root.savedView ? (entry.modelData.wifi ? "Saved Wi-Fi" : "Ethernet") : (entry.modelData.security && entry.modelData.security !== "--" ? entry.modelData.security : "Open") + "  ·  " + entry.modelData.signal + "%"
                         color: entry.modelData.active ? Theme.green : Theme.subtext0
                         font.family: Theme.fontFamily
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.captionFontSize
                     }
                     Text {
                         visible: !entry.connecting
@@ -201,7 +221,7 @@ Item {
                         text: entry.modelData.active ? "✓" : "Connect"
                         color: entry.modelData.active ? Theme.green : Theme.mauve
                         font.family: Theme.fontFamily
-                        font.pixelSize: 11
+                        font.pixelSize: Theme.smallFontSize
                     }
                     Text {
                         anchors.right: parent.right
@@ -211,9 +231,10 @@ Item {
                         text: ""
                         color: Theme.mauve
                         font.family: Theme.fontFamily
-                        font.pixelSize: 16
+                        font.pixelSize: Theme.barFontSize
                         RotationAnimation on rotation {
-                            from: 0; to: 360
+                            from: 0
+                            to: 360
                             duration: 900
                             loops: Animation.Infinite
                             running: entry.connecting
@@ -241,9 +262,10 @@ Item {
                         }
                     }
                     Column {
-                        x: 9; y: 50
+                        x: 9
+                        y: 50
                         width: parent.width - 58
-                        spacing: 8
+                        spacing: Theme.spacing
                         visible: entry.expanded
                         TextField {
                             id: password
@@ -256,18 +278,21 @@ Item {
                             selectionColor: Theme.mauve
                             selectedTextColor: Theme.base
                             font.family: Theme.fontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: Theme.bodyFontSize
                             padding: 8
                             background: Rectangle {
                                 color: Theme.base
                                 radius: 6
                                 border.color: password.activeFocus ? Theme.mauve : Theme.surface1
                             }
-                            onAccepted: { if (text.length && !entry.connecting) connectButton.clicked() }
+                            onAccepted: {
+                                if (text.length && !entry.connecting)
+                                    connectButton.clicked()
+                            }
                             Keys.onEscapePressed: root.passwordSsid = ""
                         }
                         Row {
-                            spacing: 8
+                            spacing: Theme.spacing
                             NetworkButton {
                                 id: connectButton
                                 text: "Connect"
@@ -283,7 +308,10 @@ Item {
                                 onClicked: root.passwordSsid = ""
                             }
                         }
-                        onVisibleChanged: { if (!visible) password.clear() }
+                        onVisibleChanged: {
+                            if (!visible)
+                                password.clear()
+                        }
                     }
                     Rectangle {
                         anchors.right: parent.right
@@ -300,7 +328,7 @@ Item {
                             preferredRendererType: Shape.CurveRenderer
                             ShapePath {
                                 fillColor: "transparent"
-                                strokeColor: Theme.red
+                                strokeColor: forgetMouse.containsMouse ? Theme.red : Theme.text
                                 strokeWidth: 1.4
                                 capStyle: ShapePath.RoundCap
                                 joinStyle: ShapePath.RoundJoin
@@ -327,7 +355,7 @@ Item {
                                 text: forgetTooltip.text
                                 color: Theme.text
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 11
+                                font.pixelSize: Theme.smallFontSize
                             }
                             background: Rectangle {
                                 color: Theme.mantle
@@ -351,7 +379,8 @@ Item {
                 font.family: Theme.fontFamily
                 font.pixelSize: 20
                 RotationAnimation on rotation {
-                    from: 0; to: 360
+                    from: 0
+                    to: 360
                     duration: 900
                     loops: Animation.Infinite
                     running: root.scanning
@@ -362,12 +391,11 @@ Item {
         Text {
             visible: networks.count === 0 && !root.scanning
             width: parent.width
-            text: root.savedView ? "No saved connections" : !root.network.device ? "No Wi-Fi adapter found"
-                : !root.network.enabled ? "Turn on Wi-Fi to see nearby networks" : "No networks found. Try scanning again."
+            text: root.savedView ? "No saved connections" : !root.network.device ? "No Wi-Fi adapter found" : !root.network.enabled ? "Turn on Wi-Fi to see nearby networks" : "No networks found. Try scanning again."
             wrapMode: Text.WordWrap
             color: Theme.subtext0
             font.family: Theme.fontFamily
-            font.pixelSize: 11
+            font.pixelSize: Theme.smallFontSize
         }
 
         Text {
@@ -380,10 +408,14 @@ Item {
             elide: Text.ElideRight
             color: Theme.red
             font.family: Theme.fontFamily
-            font.pixelSize: 11
+            font.pixelSize: Theme.smallFontSize
         }
 
-        Rectangle { width: parent.width; height: 1; color: Theme.surface0 }
+        Rectangle {
+            width: parent.width
+            height: 1
+            color: Theme.surface0
+        }
 
         Row {
             spacing: 6
@@ -398,7 +430,10 @@ Item {
                 enabled: root.network.current.kind !== "down"
                 onClicked: root.action(["disconnect", root.network.current.device])
             }
-            NetworkButton { text: "Settings"; onClicked: root.settings() }
+            NetworkButton {
+                text: "Settings"
+                onClicked: root.settings()
+            }
         }
     }
 }

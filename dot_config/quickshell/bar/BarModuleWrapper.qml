@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import Quickshell.Widgets
 import qs
 
@@ -9,6 +10,11 @@ WrapperMouseArea {
     property int horizontalPadding: Theme.padding + 2
     property int verticalPadding: Theme.padding
     property bool mouseEnabled: false
+    property string tooltipText: ""
+    hoverEnabled: tooltipText.length > 0
+    ToolTip.visible: containsMouse && tooltipText.length > 0
+    ToolTip.text: tooltipText
+    ToolTip.delay: 500
     default property alias contentItem: rect.child
 
     enabled: mouseEnabled

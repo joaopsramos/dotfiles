@@ -1,66 +1,28 @@
 import QtQuick
 import QtQuick.Controls
-import Quickshell.Io
-import Quickshell.Services.Pipewire
+import qs.services as Services
 import qs
 
 Item {
     id: root
 
-    property var source: Pipewire.defaultAudioSource
+    readonly property var source: Services.Audio.source
     readonly property bool muted: source?.audio?.muted ?? false
-    PwObjectTracker { objects: root.source ? [root.source] : [] }
 
-    property var activeApplications: []
+    readonly property var activeApplications: Services.Audio.activeApplications
     readonly property string applications: activeApplications.join("\n")
-    property real reveal: muted || activeApplications.length > 0 ? 1 : 0
+    property real reveal: activeApplications.length > 0 ? 1 : 0
 
     Behavior on reveal {
-        NumberAnimation { duration: 250; easing.type: Easing.OutCubic }
-    }
-
-    function updateCaptureState(snapshot) {
-        const names = snapshot.filter(node => node.type === "PipeWire:Interface:Node"
-            && node.info?.state === "running"
-            && node.info.props?.["media.class"] === "Stream/Input/Audio")
-            .map(node => node.info.props["application.name"]
-                || node.info.props["node.description"]
-                || node.info.props["node.name"] || "Unknown application")
-        activeApplications = [...new Set(names)]
+        NumberAnimation {
+            duration: 250
+            easing.type: Easing.OutCubic
+        }
     }
 
     visible: reveal > 0
     implicitWidth: (microphone.implicitWidth + 24) * reveal
     implicitHeight: microphone.implicitHeight + 12
-
-    Process {
-        id: captureState
-        command: ["pw-dump"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (!text.trim()) {
-                    root.activeApplications = []
-                    return
-                }
-                try {
-                    root.updateCaptureState(JSON.parse(text))
-                } catch (error) {
-                    console.warn("Could not read microphone capture state:", error)
-                }
-            }
-        }
-    }
-
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            if (!captureState.running)
-                captureState.running = true
-        }
-    }
 
     Rectangle {
         id: bubble
@@ -82,7 +44,7 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        enabled: root.muted || root.activeApplications.length > 0
+        enabled: root.activeApplications.length > 0
         hoverEnabled: true
         cursorShape: Qt.ArrowCursor
         ToolTip.visible: containsMouse && root.activeApplications.length > 0

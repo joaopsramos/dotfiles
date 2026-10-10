@@ -49,7 +49,7 @@ QtObject {
     readonly property color warning: yellow
     readonly property color error: red
 
-    // Waybar module accents
+    // Bar module accents
     readonly property color volume: mauve
     readonly property color soundOutput: sapphire
     readonly property color cpu: peach
@@ -62,9 +62,23 @@ QtObject {
     readonly property int borderWidth: 1
     readonly property int spacing: 8
     readonly property int padding: 10
-    readonly property int barHeight: 36
+    readonly property int barHeight: 34
+    readonly property int moduleHorizontalPadding: 12
+    readonly property int moduleVerticalPadding: 6
 
     // ===== Font =====
     readonly property string fontFamily: "Hack Nerd Font"
     readonly property int fontSize: 13
+    readonly property int captionFontSize: 10
+    readonly property int smallFontSize: 11
+    readonly property int bodyFontSize: 12
+    readonly property int headingFontSize: 15
+    readonly property int barFontSize: 16
+
+    // ===== Timing =====
+    readonly property int popupOpenDelay: 150
+    readonly property int popupCloseDelay: 300
+    readonly property int fastAnimation: 140
+    readonly property int normalAnimation: 220
+    readonly property int slowAnimation: 350
 }

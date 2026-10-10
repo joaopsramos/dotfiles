@@ -14,16 +14,26 @@ Item {
     readonly property bool presented: host !== null && host.shown && host.activeClient === root
     readonly property bool hovered: presented && host.hovered
     default property alias panelData: parking.data
-    signal dismissed()
+    signal dismissed
 
     onOpenedChanged: {
-        if (!host) return
-        if (opened) host.activate(root)
-        else host.close(root)
+        if (!host)
+            return
+        if (opened)
+            host.activate(root)
+        else
+            host.close(root)
     }
     function park() {
-        if (contentItem) contentItem.parent = parking
+        if (contentItem)
+            contentItem.parent = parking
     }
-    Item { id: parking; visible: false }
-    Component.onDestruction: { if (host) host.release(root) }
+    Item {
+        id: parking
+        visible: false
+    }
+    Component.onDestruction: {
+        if (host)
+            host.release(root)
+    }
 }

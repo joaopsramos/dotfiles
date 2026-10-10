@@ -5,11 +5,11 @@ import qs
 
 Column {
     id: root
-    property var monthDate: new Date(Number(Qt.formatDate(Time.date, "yyyy")), Number(Qt.formatDate(Time.date, "M")) - 1, 1)
+    property var monthDate: new Date(Time.year, Time.month, 1)
     readonly property int firstWeekday: new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).getDay()
     readonly property int weekCount: Math.ceil((firstWeekday + new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate()) / 7)
 
-    spacing: 8
+    spacing: Theme.spacing
 
     Row {
         width: parent.width
@@ -31,6 +31,7 @@ Column {
                 font.pixelSize: 22
             }
             MouseArea {
+                cursorShape: Qt.PointingHandCursor
                 id: previousMonth
                 anchors.fill: parent
                 hoverEnabled: true
@@ -66,6 +67,7 @@ Column {
                 font.pixelSize: 22
             }
             MouseArea {
+                cursorShape: Qt.PointingHandCursor
                 id: nextMonth
                 anchors.fill: parent
                 hoverEnabled: true
@@ -94,7 +96,7 @@ Column {
                 text: modelData
                 color: Theme.subtext0
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: Theme.smallFontSize
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -107,10 +109,7 @@ Column {
                 property int day: index - root.firstWeekday + 1
                 property var cellDate: new Date(root.monthDate.getFullYear(), root.monthDate.getMonth(), day)
                 property bool inCurrentMonth: cellDate.getMonth() === root.monthDate.getMonth()
-                property bool isToday: inCurrentMonth
-                    && cellDate.getFullYear() === Number(Qt.formatDate(Time.date, "yyyy"))
-                    && cellDate.getMonth() + 1 === Number(Qt.formatDate(Time.date, "M"))
-                    && cellDate.getDate() === Number(Qt.formatDate(Time.date, "d"))
+                property bool isToday: inCurrentMonth && cellDate.getFullYear() === Time.year && cellDate.getMonth() === Time.month && cellDate.getDate() === Time.day
 
                 width: (parent.width - 12) / 7
                 height: 28
@@ -122,7 +121,7 @@ Column {
                     text: parent.cellDate.getDate()
                     color: parent.isToday ? Theme.base : parent.inCurrentMonth ? Theme.text : Theme.surface2
                     font.family: Theme.fontFamily
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.bodyFontSize
                 }
             }
         }

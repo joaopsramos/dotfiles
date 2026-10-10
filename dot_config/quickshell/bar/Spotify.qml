@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Shapes
 import Quickshell.Services.Mpris
 import qs
 import "media"
@@ -13,81 +12,53 @@ Item {
     visible: player !== null && maximumWidth > 80
     onVisibleChanged: {
         if (!visible)
-            popupOpen = false;
+            popupOpen = false
     }
     property bool popupOpen: false
     readonly property bool popupVisible: popupClient.presented
     readonly property real popupWidth: Math.max(420, root.width + 24)
     implicitWidth: module.implicitWidth
-    implicitHeight: parentWindow ? parentWindow.height : 34
+    implicitHeight: parentWindow ? parentWindow.height : Theme.barHeight
 
     function openPopup() {
-        if (!parentWindow || !visible)
-            return;
-        closeDelay.stop();
-        popupOpen = true;
+        popupHover.open()
     }
-    Timer {
-        id: openDelay
-        interval: 150
-        onTriggered: root.openPopup()
-    }
-    Timer {
-        id: closeDelay
-        interval: 300
-        onTriggered: {
-            if (!barHover.hovered && !popupClient.hovered)
-                root.popupOpen = false;
-        }
+    PopupHover {
+        id: popupHover
+        triggerHovered: barHover.hovered
+        popupHovered: popupClient.hovered
+        available: !!root.parentWindow && root.visible
+        onOpenRequested: root.popupOpen = true
+        onCloseRequested: root.popupOpen = false
     }
     HoverHandler {
         id: barHover
-        onHoveredChanged: {
-            if (hovered) {
-                closeDelay.stop();
-                openDelay.restart();
-            } else {
-                openDelay.stop();
-                closeDelay.restart();
-            }
-        }
     }
-    Shape {
-        id: frame
+    PopupFrame {
         anchors.fill: parent
         visible: root.popupVisible
-        preferredRendererType: Shape.CurveRenderer
-        ShapePath {
-            fillColor: Theme.base
-            strokeColor: Theme.surface1
-            strokeWidth: Theme.borderWidth
-            capStyle: ShapePath.FlatCap
-            PathSvg {
-                path: "M 0.5 " + frame.height + " L 0.5 8.5 Q 0.5 0.5 8.5 0.5 L " + (frame.width - 8.5) + " 0.5 Q " + (frame.width - 0.5) + " 0.5 " + (frame.width - 0.5) + " 8.5 L " + (frame.width - 0.5) + " " + frame.height
-            }
-        }
     }
     BarModuleWrapper {
         id: module
         anchors.centerIn: parent
         horizontalPadding: 14
-        verticalPadding: 6
+        verticalPadding: Theme.moduleVerticalPadding
         moduleColor: root.popupVisible ? "transparent" : Theme.base
         mouseEnabled: true
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton | Qt.BackButton | Qt.ForwardButton
         onClicked: mouse => {
             if (!root.player)
-                return;
+                return
             if (mouse.button === Qt.LeftButton && root.player.canTogglePlaying)
-                root.player.togglePlaying();
+                root.player.togglePlaying()
             else if ((mouse.button === Qt.MiddleButton || mouse.button === Qt.BackButton) && root.player.canGoPrevious)
-                root.player.previous();
+                root.player.previous()
             else if ((mouse.button === Qt.RightButton || mouse.button === Qt.ForwardButton) && root.player.canGoNext)
-                root.player.next();
+                root.player.next()
         }
         Row {
             id: barContent
-            spacing: 8
+            spacing: Theme.spacing
 
             BarText {
                 id: spotifyIcon
@@ -106,7 +77,7 @@ Item {
 
             BarText {
                 id: statusIcon
-                text: !root.player ? "" : root.player.playbackState === MprisPlaybackState.Playing ? "" : root.player.playbackState === MprisPlaybackState.Paused ? "󰐌" : ""
+                text: !root.player ? "" : root.player.isPlaying ? "" : "󰐌"
                 color: root.player?.isPlaying ? Theme.red : Theme.sapphire
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -120,7 +91,6 @@ Item {
         opened: root.popupOpen
         contentItem: content
         onDismissed: root.popupOpen = false
-        onHoveredChanged: { if (hovered) closeDelay.stop(); else closeDelay.restart() }
         SpotifyPanel {
             id: content
             player: root.player

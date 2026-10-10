@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
@@ -18,32 +20,49 @@ Item {
     readonly property bool hovered: cardHover.hovered
     readonly property real targetWidth: activeClient ? Math.min(activeClient.popupWidth, popup.width) : 360
     readonly property real targetLeft: Math.max(0, Math.min(popup.width - targetWidth, targetCenter - targetWidth / 2))
-    readonly property real targetHeight: activeClient && activeClient.contentItem
-        ? Math.min(activeClient.contentItem.implicitHeight + 34, popup.height) : 0
+    readonly property real targetHeight: activeClient && activeClient.contentItem ? Math.min(activeClient.contentItem.implicitHeight + 34, popup.height) : 0
     property real neckCenter: targetCenter
     property real neckWidth: targetNeckWidth
-    Behavior on neckCenter { enabled: root.shown && !root.initializing; NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-    Behavior on neckWidth { enabled: root.shown && !root.initializing; NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+    Behavior on neckCenter {
+        enabled: root.shown && !root.initializing
+        NumberAnimation {
+            duration: Theme.normalAnimation
+            easing.type: Easing.OutCubic
+        }
+    }
+    Behavior on neckWidth {
+        enabled: root.shown && !root.initializing
+        NumberAnimation {
+            duration: Theme.normalAnimation
+            easing.type: Easing.OutCubic
+        }
+    }
 
     function syncPosition() {
-        if (!activeClient || !activeClient.triggerItem) return
+        if (!activeClient || !activeClient.triggerItem)
+            return
         const trigger = activeClient.triggerItem
         targetCenter = trigger.mapToItem(parentWindow.contentItem, trigger.width / 2, 0).x
         targetNeckWidth = trigger.width
     }
     function finishOutgoing() {
-        if (outgoingClient) outgoingClient.park()
+        if (outgoingClient)
+            outgoingClient.park()
         outgoingClient = null
     }
     function activate(client) {
         closeFinished.stop()
-        if (client === activeClient) { expanded = true; return }
+        if (client === activeClient) {
+            expanded = true
+            return
+        }
         contentTransition.stop()
         finishOutgoing()
         const wasShown = shown
         const oldCenter = targetCenter
         const oldClient = activeClient
-        if (!wasShown) initializing = true
+        if (!wasShown)
+            initializing = true
         if (oldClient) {
             outgoingClient = oldClient
             oldClient.contentItem.parent = outgoingPage
@@ -57,7 +76,8 @@ Item {
         client.contentItem.y = 0
         client.contentItem.width = targetWidth - 24
         scroll.contentY = 0
-        if (oldClient) oldClient.dismissed()
+        if (oldClient)
+            oldClient.dismissed()
         shown = true
         if (wasShown) {
             expanded = true
@@ -66,10 +86,9 @@ Item {
             incomingPage.opacity = 1
             incomingPage.x = 0
             outgoingPage.opacity = 0
-            // Resolve the collapsed geometry before starting the opening.
-            const initialWidth = card.width
             Qt.callLater(() => {
-                if (root.activeClient !== client) return
+                if (root.activeClient !== client)
+                    return
                 if (!client.opened) {
                     client.park()
                     root.shown = false
@@ -83,7 +102,8 @@ Item {
         }
     }
     function close(client) {
-        if (client !== activeClient || !expanded) return
+        if (client !== activeClient || !expanded)
+            return
         expanded = false
         closeFinished.restart()
     }
@@ -94,39 +114,108 @@ Item {
         }
     }
     function release(client) {
-        if (outgoingClient === client) outgoingClient = null
-        if (activeClient === client) { activeClient = null; shown = false; expanded = false }
+        if (outgoingClient === client)
+            outgoingClient = null
+        if (activeClient === client) {
+            activeClient = null
+            shown = false
+            expanded = false
+        }
     }
-    Timer { interval: 16; running: root.shown; repeat: true; onTriggered: root.syncPosition() }
+    // Watch the entire ancestor chain: Row positioning can move a trigger
+    // without changing the trigger's own x coordinate.
+    readonly property var triggerAncestors: {
+        const result = []
+        let item = activeClient?.triggerItem
+        while (item) {
+            result.push(item)
+            item = item.parent
+        }
+        return result
+    }
+    Instantiator {
+        model: root.shown ? root.triggerAncestors : []
+        delegate: Connections {
+            required property var modelData
+            target: modelData
+            function onXChanged() {
+                Qt.callLater(root.syncPosition)
+            }
+            function onYChanged() {
+                Qt.callLater(root.syncPosition)
+            }
+            function onWidthChanged() {
+                Qt.callLater(root.syncPosition)
+            }
+            function onParentChanged() {
+                Qt.callLater(root.syncPosition)
+            }
+        }
+    }
+    onTargetWidthChanged: {
+        if (activeClient?.contentItem)
+            activeClient.contentItem.width = targetWidth - 24
+    }
     Timer {
         id: closeFinished
         interval: 230
         onTriggered: {
-            if (root.expanded) return
+            if (root.expanded)
+                return
             contentTransition.stop()
             root.finishOutgoing()
-            if (root.activeClient) root.activeClient.park()
+            if (root.activeClient)
+                root.activeClient.park()
             root.shown = false
             root.activeClient = null
         }
     }
     ParallelAnimation {
         id: contentTransition
-        NumberAnimation { target: incomingPage; property: "opacity"; from: 0; to: 1; duration: 180 }
-        NumberAnimation { target: incomingPage; property: "x"; from: root.direction * 28; to: 0; duration: 220; easing.type: Easing.OutCubic }
-        NumberAnimation { target: outgoingPage; property: "opacity"; from: 1; to: 0; duration: 150 }
-        NumberAnimation { target: outgoingPage; property: "x"; from: 0; to: -root.direction * 28; duration: 220; easing.type: Easing.OutCubic }
+        NumberAnimation {
+            target: incomingPage
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: 180
+        }
+        NumberAnimation {
+            target: incomingPage
+            property: "x"
+            from: root.direction * 28
+            to: 0
+            duration: Theme.normalAnimation
+            easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: outgoingPage
+            property: "opacity"
+            from: 1
+            to: 0
+            duration: 150
+        }
+        NumberAnimation {
+            target: outgoingPage
+            property: "x"
+            from: 0
+            to: -root.direction * 28
+            duration: Theme.normalAnimation
+            easing.type: Easing.OutCubic
+        }
         onFinished: root.finishOutgoing()
     }
     HyprlandFocusGrab {
         windows: [root.parentWindow, popup]
         active: root.expanded && !!root.activeClient && root.activeClient.grabFocus
-        onCleared: { if (root.activeClient && root.activeClient.grabFocus) root.dismiss() }
+        onCleared: {
+            if (root.activeClient && root.activeClient.grabFocus)
+                root.dismiss()
+        }
     }
     // Quickshell creates PanelWindow at runtime despite its qmltypes annotation.
     // qmllint disable uncreatable-type
     PanelWindow {
-    // qmllint enable uncreatable-type
+        // qmllint enable uncreatable-type
         id: popup
         screen: root.parentWindow.screen
         anchors.top: true
@@ -141,44 +230,71 @@ Item {
         implicitHeight: screen ? Math.max(1, screen.height - margins.top - 10) : 800
         // qmllint enable unresolved-type
         exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.keyboardFocus: root.expanded && root.activeClient && root.activeClient.keyboardFocus
-            ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+        WlrLayershell.keyboardFocus: root.expanded && root.activeClient && root.activeClient.keyboardFocus ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
         visible: root.shown
         color: "transparent"
-        mask: Region { item: card }
+        mask: Region {
+            item: card
+        }
         Item {
             id: card
             x: root.expanded ? root.targetLeft : root.targetCenter - root.targetNeckWidth / 2
             width: root.expanded ? root.targetWidth : root.targetNeckWidth
             height: root.expanded ? root.targetHeight : 0
             clip: true
-            Behavior on x { enabled: !root.initializing; NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-            Behavior on width { enabled: !root.initializing; NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
-            Behavior on height { enabled: !root.initializing; NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+            Behavior on x {
+                enabled: !root.initializing
+                NumberAnimation {
+                    duration: Theme.normalAnimation
+                    easing.type: Easing.OutCubic
+                }
+            }
+            Behavior on width {
+                enabled: !root.initializing
+                NumberAnimation {
+                    duration: Theme.normalAnimation
+                    easing.type: Easing.OutCubic
+                }
+            }
+            Behavior on height {
+                enabled: !root.initializing
+                NumberAnimation {
+                    duration: Theme.normalAnimation
+                    easing.type: Easing.OutCubic
+                }
+            }
             CalendarSurface {
                 anchors.fill: parent
                 neckWidth: Math.min(root.neckWidth, parent.width)
                 neckCenter: Math.max(neckWidth / 2, Math.min(parent.width - neckWidth / 2, root.neckCenter - card.x))
-                fillColor: Theme.base; strokeColor: Theme.surface1; strokeWidth: Theme.borderWidth
+                fillColor: Theme.base
+                strokeColor: Theme.surface1
+                strokeWidth: Theme.borderWidth
             }
             Flickable {
                 id: scroll
-                x: 12; y: 22
+                x: 12
+                y: 22
                 width: Math.max(0, parent.width - 24)
                 height: Math.max(0, parent.height - 34)
                 contentHeight: root.activeClient && root.activeClient.contentItem ? root.activeClient.contentItem.implicitHeight : 0
                 clip: true
                 interactive: root.expanded && !contentTransition.running
-                opacity: Math.min(1, Math.max(0, (card.height - 30) / 80))
+                opacity: Math.min(1, Math.max(0, (card.height - 30) / Math.max(1, Math.min(80, root.targetHeight - 30))))
                 boundsBehavior: Flickable.StopAtBounds
                 Item {
                     id: incomingPage
                     width: root.targetWidth - 24
                     height: scroll.contentHeight
                 }
-                Item { id: outgoingPage; enabled: false }
+                Item {
+                    id: outgoingPage
+                    enabled: false
+                }
             }
-            HoverHandler { id: cardHover }
+            HoverHandler {
+                id: cardHover
+            }
         }
     }
 }

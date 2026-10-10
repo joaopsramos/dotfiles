@@ -1,5 +1,6 @@
 import Quickshell
 import QtQuick
+import qs
 
 Scope {
     Variants {
@@ -8,7 +9,7 @@ Scope {
         // Quickshell creates this type at runtime; its installed qmltypes mark it uncreatable.
         // qmllint disable uncreatable-type
         PanelWindow {
-        // qmllint enable uncreatable-type
+            // qmllint enable uncreatable-type
             id: panelWindow
             property alias popupHost: popupHost
             required property var modelData
@@ -16,7 +17,10 @@ Scope {
 
             color: "transparent"
 
-            BarPopup { id: popupHost; parentWindow: panelWindow }
+            BarPopup {
+                id: popupHost
+                parentWindow: panelWindow
+            }
 
             anchors {
                 top: true
@@ -24,7 +28,7 @@ Scope {
                 right: true
             }
 
-            implicitHeight: 34
+            implicitHeight: Theme.barHeight
 
             // The installed Quickshell qmltypes omit the Margins value type.
             // qmllint disable unqualified unresolved-type
@@ -39,7 +43,7 @@ Scope {
                 id: leftModules
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 8
+                spacing: Theme.spacing
 
                 Workspaces {
                     id: workspaces
@@ -49,8 +53,7 @@ Scope {
                 Spotify {
                     parentWindow: panelWindow
                     anchors.verticalCenter: parent.verticalCenter
-                    maximumWidth: Math.max(0, clock.x - workspaces.width - leftModules.spacing - 8
-                        - (micUsage.visible ? micUsage.width + leftModules.spacing : 0))
+                    maximumWidth: Math.max(0, clock.x - workspaces.width - leftModules.spacing - 8 - (micUsage.visible ? micUsage.width + leftModules.spacing : 0))
                 }
 
                 MicUsage {

@@ -1,12 +1,14 @@
 import QtQuick
+import qs
 import Quickshell
-import Quickshell.Io
+import qs.services as Services
 import Quickshell.Services.SystemTray
 import "network" as NetworkWidgets
 import "audio" as AudioWidgets
 import "battery" as BatteryWidgets
 import "system" as SystemWidgets
 import "storage" as StorageWidgets
+import "bluetooth" as BluetoothWidgets
 
 Item {
     id: root
@@ -18,42 +20,19 @@ Item {
     })
 
     property var parentWindow
-    property var stats: ({ cpu: 0, memory: 0, disk: 0, volume: 0, muted: false,
-        sound: "󰓃", network: { kind: "down", name: "" }, battery: { value: -1, charging: false } })
+    readonly property var stats: Services.Status.stats
 
     implicitWidth: modules.implicitWidth
     implicitHeight: modules.implicitHeight
 
-    function refresh() {
-        statsProcess.running = true
-    }
-
-    Process {
-        id: statsProcess
-        command: ["python3", "/home/joao/.config/quickshell/bar/status.py"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try { root.stats = JSON.parse(text) } catch (e) { }
-            }
-        }
-    }
-
-    Timer {
-        interval: 2000
-        repeat: true
-        running: true
-        triggeredOnStart: true
-        onTriggered: root.refresh()
-    }
-
     Row {
         id: modules
-        spacing: 8
+        spacing: Theme.spacing
 
         AudioWidgets.Audio {
             anchors.verticalCenter: parent.verticalCenter
             parentWindow: root.parentWindow
-            outputIcon: root.stats.sound
+            outputIcon: Services.Audio.outputIcon
         }
 
         SystemWidgets.System {
@@ -77,7 +56,8 @@ Item {
         BarModuleWrapper {
             anchors.verticalCenter: parent.verticalCenter
             visible: root.visibleTrayItems.length > 0
-            horizontalPadding: 10; verticalPadding: 6
+            horizontalPadding: 10
+            verticalPadding: Theme.moduleVerticalPadding
             mouseEnabled: true
             cursorShape: Qt.ArrowCursor
             Row {
@@ -87,10 +67,12 @@ Item {
                     delegate: Item {
                         id: trayItem
                         required property var modelData
-                        width: 16; height: 20
+                        width: 16
+                        height: 20
 
                         function openMenu() {
-                            if (!modelData.hasMenu || !root.parentWindow) return
+                            if (!modelData.hasMenu || !root.parentWindow)
+                                return
                             const point = mapToItem(root.parentWindow.contentItem, 0, height)
                             trayMenu.anchor.rect.x = Math.round(point.x)
                             trayMenu.anchor.rect.y = Math.round(point.y)
@@ -103,21 +85,35 @@ Item {
                             anchor.window: root.parentWindow
                         }
 
-                        Image { anchors.centerIn: parent; width: 16; height: 16; source: modelData.icon; sourceSize: Qt.size(32, 32); fillMode: Image.PreserveAspectFit }
+                        Image {
+                            anchors.centerIn: parent
+                            width: 16
+                            height: 16
+                            source: modelData.icon
+                            sourceSize: Qt.size(32, 32)
+                            fillMode: Image.PreserveAspectFit
+                        }
                         MouseArea {
+                            cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
                             acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                             onClicked: mouse => {
-                                if (mouse.button === Qt.RightButton ||
-                                        (mouse.button === Qt.LeftButton && modelData.onlyMenu))
+                                if (mouse.button === Qt.RightButton || (mouse.button === Qt.LeftButton && modelData.onlyMenu))
                                     trayItem.openMenu()
-                                else if (mouse.button === Qt.LeftButton) modelData.activate()
-                                else if (mouse.button === Qt.MiddleButton) modelData.secondaryActivate()
+                                else if (mouse.button === Qt.LeftButton)
+                                    modelData.activate()
+                                else if (mouse.button === Qt.MiddleButton)
+                                    modelData.secondaryActivate()
                             }
                         }
                     }
                 }
             }
+        }
+
+        BluetoothWidgets.Bluetooth {
+            anchors.verticalCenter: parent.verticalCenter
+            parentWindow: root.parentWindow
         }
 
         NetworkWidgets.Network {
@@ -127,5 +123,4 @@ Item {
             fallback: root.stats.network
         }
     }
-
 }

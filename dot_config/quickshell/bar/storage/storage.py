@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Local storage usage, block devices and readable drive temperatures."""
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
-import os
 
 
 def read(path):
@@ -24,9 +24,60 @@ def usage(path):
     total = stats.f_blocks * unit
     used = (stats.f_blocks - stats.f_bfree) * unit
     available = stats.f_bavail * unit
-    return {'total': total, 'used': used, 'available': available,
-            'reserved': max(0, total - used - available),
-            'usage': round(used * 100 / total, 1) if total else 0}
+    return {
+        'total': total,
+        'used': used,
+        'available': available,
+        'reserved': max(0, total - used - available),
+        'usage': round(used * 100 / total, 1) if total else 0,
+    }
+
+
+def drive_temperatures():
+    result = {}
+    for sensor in Path('/sys/class/hwmon').glob('hwmon*'):
+        if read(sensor / 'name') not in ('nvme', 'drivetemp'):
+            continue
+        readings, preferred = [], []
+        for value in sensor.glob('temp*_input'):
+            try:
+                degrees = float(read(value)) / 1000
+            except ValueError:
+                continue
+            if not -20 < degrees < 150:
+                continue
+            readings.append(degrees)
+            label = value.with_name(value.name.replace('_input', '_label'))
+            if read(label).lower() == 'composite':
+                preferred.append(degrees)
+        result[(sensor / 'device').resolve()] = (preferred or readings or [None])[0]
+    return result
+
+
+def read_devices():
+    devices = []
+    try:
+        result = subprocess.run(
+            ['lsblk', '-J', '-b', '-o', 'NAME,TYPE,SIZE,MODEL,TRAN,ROTA'],
+            capture_output=True, text=True, timeout=2, check=True,
+        )
+        temperatures = drive_temperatures()
+        for disk in json.loads(result.stdout).get('blockdevices', []):
+            if disk['type'] != 'disk':
+                continue
+            device = Path('/sys/class/block', disk['name'], 'device').resolve()
+            temperature = temperatures.get(device, temperatures.get(device.parent))
+            devices.append({
+                'name': disk['name'],
+                'model': (disk.get('model') or disk['name']).strip(),
+                'size': disk['size'],
+                'kind': 'NVMe SSD' if disk.get('tran') == 'nvme' else 'HDD' if disk.get('rota') else 'SSD',
+                'transport': disk.get('tran') or '',
+                'temperature': temperature,
+            })
+    except (OSError, ValueError, subprocess.SubprocessError):
+        pass
+    return devices
 
 
 def snapshot():
@@ -47,49 +98,21 @@ def snapshot():
                 volumes[identity]['mountpoints'].append(mount)
             continue
         try:
-            volumes[identity] = dict(usage(mount), mountpoints=[mount], source=source, filesystem=filesystem)
+            volumes[identity] = dict(
+                usage(mount), mountpoints=[mount], source=source, filesystem=filesystem,
+            )
         except OSError:
             continue
-    devices = []
-    try:
-        result = subprocess.run(['lsblk', '-J', '-b', '-o', 'NAME,TYPE,SIZE,MODEL,TRAN,ROTA'],
-                                capture_output=True, text=True, timeout=2)
-        for disk in json.loads(result.stdout).get('blockdevices', []):
-            if disk['type'] != 'disk':
-                continue
-            temperature = None
-            block_device = Path('/sys/class/block', disk['name'], 'device').resolve()
-            for sensor in Path('/sys/class/hwmon').glob('hwmon*'):
-                if read(sensor / 'name') not in ('nvme', 'drivetemp'):
-                    continue
-                sensor_device = (sensor / 'device').resolve()
-                if sensor_device not in (block_device, block_device.parent):
-                    continue
-                readings = []
-                preferred = []
-                for value in sensor.glob('temp*_input'):
-                    try:
-                        degrees = float(read(value)) / 1000
-                        if not -20 < degrees < 150:
-                            continue
-                        readings.append(degrees)
-                        if read(value.with_name(value.name.replace('_input', '_label'))).lower() == 'composite':
-                            preferred.append(degrees)
-                    except ValueError:
-                        pass
-                temperature = (preferred or readings or [None])[0]
-            devices.append({'name': disk['name'], 'model': (disk.get('model') or disk['name']).strip(),
-                            'size': disk['size'], 'kind': 'NVMe SSD' if disk.get('tran') == 'nvme'
-                            else 'HDD' if disk.get('rota') else 'SSD',
-                            'transport': disk.get('tran') or '', 'temperature': temperature})
-    except (OSError, ValueError, subprocess.TimeoutExpired):
-        pass
-    return {'root': root, 'volumes': sorted(volumes.values(), key=lambda item: ('/' not in item['mountpoints'], item['mountpoints'][0])),
-            'devices': devices}
+    return {
+        'root': root,
+        'volumes': sorted(volumes.values(), key=lambda item:
+                          ('/' not in item['mountpoints'], item['mountpoints'][0])),
+        'devices': read_devices(),
+    }
 
 
 if __name__ == '__main__':
     try:
         print(json.dumps({'ok': True, 'data': snapshot()}))
-    except (OSError, ValueError, IndexError):
+    except (OSError, ValueError, IndexError, KeyError):
         print(json.dumps({'ok': False, 'error': 'Could not read storage information.'}))
