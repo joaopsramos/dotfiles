@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import qs
-import "../system" as SystemWidgets
+import qs.components
 
 Column {
     id: root
@@ -51,7 +51,7 @@ Column {
         height: 160
         radius: Theme.radius
         color: Theme.mantle
-        SystemWidgets.UsageGauge {
+        UsageGauge {
             x: 8
             anchors.verticalCenter: parent.verticalCenter
             label: "ROOT /"

@@ -43,6 +43,7 @@ local screenshot = "hyprshot --freeze --mode=region --raw | satty --filename=- -
 -- Or execute your favorite apps at launch like this:
 
 hl.on("hyprland.start", function()
+	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 	hl.exec_cmd("elephant & walker --gapplication-service")
 	hl.exec_cmd("qs & hyprpaper")
 end)

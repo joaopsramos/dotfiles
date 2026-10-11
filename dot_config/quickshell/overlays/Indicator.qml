@@ -16,16 +16,25 @@ Rectangle {
     border.width: Theme.borderWidth
     border.color: Theme.surface1
 
-    Text {
+    Item {
         x: 18
         width: 34
         height: parent.height
-        text: root.icon
-        color: root.muted ? Theme.red : root.accent
-        font.family: Theme.fontFamily
-        font.pixelSize: 26
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
+        TextMetrics {
+            id: iconMetrics
+            font: iconGlyph.font
+            text: root.icon
+        }
+        Text {
+            id: iconGlyph
+            // Center the visible ink rather than the glyph's font cell.
+            x: (parent.width - iconMetrics.tightBoundingRect.width) / 2 - iconMetrics.tightBoundingRect.x
+            y: (parent.height - iconMetrics.tightBoundingRect.height) / 2 - baselineOffset - iconMetrics.tightBoundingRect.y
+            text: root.icon
+            color: root.muted ? Theme.red : root.accent
+            font.family: Theme.fontFamily
+            font.pixelSize: 26
+        }
     }
     Column {
         x: 68

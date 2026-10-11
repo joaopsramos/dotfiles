@@ -9,6 +9,7 @@ Scope {
     readonly property date receivedAt: new Date()
     property bool hovered: false
     property bool closed: false
+    property bool popupSuppressed: false
     // Quickshell's qmltypes expose this property as an unresolved C++ QList.
     // qmllint disable unresolved-type
     readonly property list<NotificationAction> actions: !closed && notification ? notification.actions : []

@@ -77,7 +77,7 @@ Item {
     Rectangle {
         anchors.centerIn: parent
         width: parent.width
-        height: icon.implicitHeight + 12
+        height: root.height
         radius: Theme.radius
         color: Theme.base
         visible: !root.popupVisible

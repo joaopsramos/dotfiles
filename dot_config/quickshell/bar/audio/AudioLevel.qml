@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import qs
+import qs.components
 
 Column {
     id: root
@@ -55,7 +56,7 @@ Column {
             font.pixelSize: Theme.fontSize
             verticalAlignment: Text.AlignVCenter
         }
-        AudioButton {
+        ThemedButton {
             id: mute
             text: root.audio?.muted ? "Unmute" : "Mute"
             backgroundColor: root.audio?.muted ? Theme.green : Theme.red

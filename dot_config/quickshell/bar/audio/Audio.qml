@@ -86,6 +86,12 @@ Item {
                     text: !root.sink?.audio || root.sink.audio.muted ? "" : Math.round(root.sink.audio.volume * 100) + "%"
                     color: Theme.volume
                 }
+                BarText {
+                    visible: Services.Audio.source?.audio?.muted ?? false
+                    text: ""
+                    color: Theme.overlay1
+                    leftPadding: 2
+                }
             }
         }
     }

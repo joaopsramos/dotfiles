@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.Pipewire
 import qs
+import qs.components
 import qs.services as Services
 
 Column {
@@ -126,7 +127,7 @@ Column {
             }
         }
     }
-    AudioButton {
+    ThemedButton {
         text: "Audio settings"
         onClicked: root.settings()
     }

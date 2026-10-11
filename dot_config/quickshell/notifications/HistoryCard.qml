@@ -97,6 +97,7 @@ Rectangle {
         Text {
             width: parent.width
             text: root.record.summary
+            visible: text.length > 0
             textFormat: Text.PlainText
             color: Theme.text
             wrapMode: Text.Wrap

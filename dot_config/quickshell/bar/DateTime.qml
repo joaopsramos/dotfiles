@@ -67,7 +67,6 @@ Item {
         triggerItem: root
         popupWidth: 292
         opened: root.calendarOpen
-        grabFocus: true
         contentItem: calendarContent
         onDismissed: root.calendarOpen = false
         CalendarPanel {

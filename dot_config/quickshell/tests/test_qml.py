@@ -57,6 +57,7 @@ import qs.services as Services
 import qs.bar.audio as AudioWidgets
 import qs.bar.bluetooth as BluetoothWidgets
 import qs.notifications as Notifications
+import qs.downloads as DownloadsWidgets
 
 Scope {
     id: root
@@ -82,6 +83,7 @@ Scope {
         return { id: id, properties: { "application.name": name }, name: name,
             description: name, audio: { volume: 0.5, muted: false } }
     }
+    DownloadsWidgets.Downloads { id: downloads }
     AudioWidgets.AudioPanel { id: audio; width: 340 }
     BluetoothWidgets.BluetoothPanel { id: bluetooth; width: 340 }
     Notifications.HistoryList {
@@ -103,6 +105,15 @@ Scope {
         }
     }
     Component.onCompleted: {
+        const first = {path: "/Downloads/first.txt", revision: "unchanged", arrived: 100}
+        const second = {path: "/Downloads/second.txt", revision: "unchanged", arrived: 100}
+        downloads.entries = [first, second]
+        downloads.dismissed = {"/Downloads/first.txt": "unchanged:100"}
+        check(downloads.visibleEntries.length === 1, "Dismissed download stayed visible")
+        downloads.entries = []
+        downloads.entries = [Object.assign({}, first, {arrived: 200}),
+                             Object.assign({}, second, {arrived: 200})]
+        check(downloads.visibleEntries.length === 2, "Restored download retained an earlier dismissal")
         Services.Audio.playbackNodes = [node(1, "First app")]
         Services.Bluetooth.refresh()
         Services.Bluetooth.runAction(["pair", "/device/a"])
@@ -174,7 +185,7 @@ class WidgetTests(unittest.TestCase):
     def test_queue_recovery_row_identity_and_virtual_history(self):
         with tempfile.TemporaryDirectory(prefix='quickshell-widgets-') as directory:
             root = Path(directory)
-            for dirname in ('services', 'bar', 'notifications'):
+            for dirname in ('services', 'bar', 'notifications', 'downloads'):
                 for source in (ROOT / dirname).rglob('*.qml'):
                     target = root / source.relative_to(ROOT)
                     target.parent.mkdir(parents=True, exist_ok=True)
@@ -182,6 +193,11 @@ class WidgetTests(unittest.TestCase):
             shutil.copy2(ROOT / 'Theme.qml', root / 'Theme.qml')
             (root / 'services/Audio.qml').write_text(textwrap.dedent(AUDIO_SERVICE))
             (root / 'bar/bluetooth/bluetooth.py').write_text(textwrap.dedent(BLUETOOTH_BRIDGE))
+            # Keep production Downloads state/filtering; offscreen Qt has no
+            # PanelWindow backend for its compositor-facing surfaces.
+            downloads = root / 'downloads/Downloads.qml'
+            downloads.write_text(downloads.read_text().split('    Variants {', 1)[0] + '}\n')
+            (root / 'downloads/watch.py').write_text('import time; time.sleep(30)')
             (root / 'stream.py').write_text(textwrap.dedent(STREAM_BRIDGE))
             (root / 'shell.qml').write_text(textwrap.dedent(SHELL))
             runtime = root / 'runtime'

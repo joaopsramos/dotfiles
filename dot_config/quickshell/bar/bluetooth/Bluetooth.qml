@@ -9,6 +9,11 @@ Item {
     property bool popupOpen: false
     readonly property bool popupVisible: popupClient.presented
     readonly property var backend: Services.Bluetooth
+    visible: backend.ready && !!backend.state.adapter
+    onVisibleChanged: {
+        if (!visible)
+            popupOpen = false
+    }
     implicitWidth: module.implicitWidth
     implicitHeight: parentWindow ? parentWindow.height : Theme.barHeight
     onPopupOpenChanged: backend.setViewer(root, popupOpen)

@@ -119,6 +119,7 @@ Column {
                     }
                     required property string modelData
                     readonly property bool selected: root.activeProfile === modelData
+                    readonly property color backgroundColor: selected ? Theme.mauve : Theme.mantle
                     text: modelData === "power-saver" ? "Power saver" : modelData === "balanced" ? "Balanced" : "Performance"
                     implicitHeight: 30
                     leftPadding: 8
@@ -126,15 +127,15 @@ Column {
                     onClicked: root.selectProfile(modelData)
                     contentItem: Text {
                         text: button.text
-                        color: button.selected ? Theme.mauve : Theme.text
+                        color: button.selected ? Theme.base : Theme.text
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.captionFontSize
                         verticalAlignment: Text.AlignVCenter
                     }
                     background: Rectangle {
                         radius: 6
-                        color: button.hovered ? Theme.surface0 : Theme.mantle
-                        border.color: button.selected ? Theme.mauve : Theme.surface0
+                        color: button.down ? Qt.darker(button.backgroundColor, 1.2) : button.hovered ? Qt.lighter(button.backgroundColor, 1.15) : button.backgroundColor
+                        border.color: Theme.surface0
                     }
                 }
             }

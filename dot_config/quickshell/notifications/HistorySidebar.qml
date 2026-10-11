@@ -41,7 +41,7 @@ Scope {
         implicitWidth: root.sidebarWidth + 10
         implicitHeight: root.targetScreen.height - 10
         exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.layer: WlrLayer.Top
         WlrLayershell.namespace: "quickshell-notification-history"
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
         mask: Region {
@@ -110,19 +110,40 @@ Scope {
 
             Row {
                 id: header
-                x: 16
-                y: 14
-                width: parent.width - 32
+                x: 12
+                y: 12
+                width: parent.width - 24
                 height: 30
                 spacing: 10
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - clearButton.width - 10
+                    width: parent.width - clearButton.width - bellButton.width - 20
                     text: "Notifications" + (root.service.history.length ? " · " + root.service.history.length : "")
                     color: Theme.text
                     font.family: Theme.fontFamily
                     font.pixelSize: 14
                     font.bold: true
+                }
+                Rectangle {
+                    id: bellButton
+                    width: 30
+                    height: 30
+                    radius: 6
+                    color: bellMouse.containsMouse ? Theme.surface1 : Theme.surface0
+                    Text {
+                        anchors.centerIn: parent
+                        text: root.service.notificationsDisabled ? "󰂛" : "󰂚"
+                        color: root.service.notificationsDisabled ? Theme.red : Theme.text
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 18
+                    }
+                    MouseArea {
+                        id: bellMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.service.notificationsDisabled = !root.service.notificationsDisabled
+                    }
                 }
                 Rectangle {
                     id: clearButton
@@ -149,9 +170,9 @@ Scope {
                 }
             }
             Rectangle {
-                x: 16
+                x: 12
                 y: header.y + header.height + 10
-                width: parent.width - 32
+                width: parent.width - 24
                 height: 1
                 color: Theme.surface0
             }

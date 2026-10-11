@@ -27,7 +27,7 @@ WrapperMouseArea {
         radius: Theme.radius
         leftMargin: root.horizontalPadding
         rightMargin: root.horizontalPadding
-        topMargin: root.verticalPadding
-        bottomMargin: root.verticalPadding
+        topMargin: Math.max(root.verticalPadding, (Theme.barHeight - (child?.implicitHeight ?? 0)) / 2)
+        bottomMargin: topMargin
     }
 }

@@ -1,6 +1,7 @@
 import Quickshell
 import QtQuick
 import qs
+import qs.privacy
 
 Scope {
     Variants {
@@ -53,11 +54,21 @@ Scope {
                 Spotify {
                     parentWindow: panelWindow
                     anchors.verticalCenter: parent.verticalCenter
-                    maximumWidth: Math.max(0, clock.x - workspaces.width - leftModules.spacing - 8 - (micUsage.visible ? micUsage.width + leftModules.spacing : 0))
+                    maximumWidth: Math.max(0, clock.x - workspaces.width - leftModules.spacing - 8 - (micUsage.visible ? micUsage.width + leftModules.spacing : 0) - (cameraUsage.visible ? cameraUsage.width + leftModules.spacing : 0) - (screenSharingUsage.visible ? screenSharingUsage.width + leftModules.spacing : 0))
                 }
 
                 MicUsage {
                     id: micUsage
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                CameraUsage {
+                    id: cameraUsage
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                ScreenSharingUsage {
+                    id: screenSharingUsage
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }

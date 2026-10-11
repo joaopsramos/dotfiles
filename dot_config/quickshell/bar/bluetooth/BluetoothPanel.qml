@@ -4,8 +4,7 @@ import Quickshell
 import QtQuick.Controls
 import qs
 import qs.services as Services
-import "../network" as NetworkWidgets
-import "../audio" as AudioWidgets
+import qs.components
 
 Column {
     id: root
@@ -36,15 +35,13 @@ Column {
         width: parent.width
         Text {
             width: parent.width - power.width
-            height: power.height
             text: "Bluetooth"
             color: Theme.text
             font.family: Theme.fontFamily
             font.pixelSize: Theme.headingFontSize
             font.weight: Font.DemiBold
-            verticalAlignment: Text.AlignVCenter
         }
-        AudioWidgets.AudioButton {
+        ThemedButton {
             id: power
             text: root.bluetooth.enabled ? "Turn off" : "Turn on"
             backgroundColor: root.bluetooth.enabled ? Theme.red : Theme.green
@@ -105,7 +102,9 @@ Column {
                 font.pixelSize: Theme.smallFontSize
                 verticalAlignment: Text.AlignVCenter
             }
-            NetworkWidgets.NetworkButton {
+            ThemedButton {
+                horizontalAlignment: Text.AlignLeft
+                textFormat: Text.PlainText
                 id: scan
                 text: "Scan"
                 loading: root.backend.scanning

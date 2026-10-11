@@ -45,7 +45,7 @@ FocusScope {
     ]
     signal dismissRequested
     signal executeRequested(int index)
-    implicitHeight: content.implicitHeight + 40
+    implicitHeight: content.implicitHeight + 24
 
     function reset() {
         selected = 0
@@ -101,9 +101,9 @@ FocusScope {
     }
     Column {
         id: content
-        x: 20
-        y: 20
-        width: parent.width - 40
+        x: 12
+        y: 12
+        width: parent.width - 24
         spacing: 16
         Row {
             width: parent.width

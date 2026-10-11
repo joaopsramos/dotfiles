@@ -20,7 +20,9 @@ Item {
     readonly property bool hovered: cardHover.hovered
     readonly property real targetWidth: activeClient ? Math.min(activeClient.popupWidth, popup.width) : 360
     readonly property real targetLeft: Math.max(0, Math.min(popup.width - targetWidth, targetCenter - targetWidth / 2))
-    readonly property real targetHeight: activeClient && activeClient.contentItem ? Math.min(activeClient.contentItem.implicitHeight + 34, popup.height) : 0
+    readonly property int connectorHeight: 8
+    readonly property int contentPadding: 12
+    readonly property real targetHeight: activeClient && activeClient.contentItem ? Math.min(activeClient.contentItem.implicitHeight + contentPadding * 2 + connectorHeight, popup.height) : 0
     property real neckCenter: targetCenter
     property real neckWidth: targetNeckWidth
     Behavior on neckCenter {
@@ -230,6 +232,7 @@ Item {
         implicitHeight: screen ? Math.max(1, screen.height - margins.top - 10) : 800
         // qmllint enable unresolved-type
         exclusionMode: ExclusionMode.Ignore
+        WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.keyboardFocus: root.expanded && root.activeClient && root.activeClient.keyboardFocus ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
         visible: root.shown
         color: "transparent"
@@ -263,7 +266,7 @@ Item {
                     easing.type: Easing.OutCubic
                 }
             }
-            CalendarSurface {
+            PopupSurface {
                 anchors.fill: parent
                 neckWidth: Math.min(root.neckWidth, parent.width)
                 neckCenter: Math.max(neckWidth / 2, Math.min(parent.width - neckWidth / 2, root.neckCenter - card.x))
@@ -273,10 +276,10 @@ Item {
             }
             Flickable {
                 id: scroll
-                x: 12
-                y: 22
-                width: Math.max(0, parent.width - 24)
-                height: Math.max(0, parent.height - 34)
+                x: root.contentPadding
+                y: root.connectorHeight + root.contentPadding
+                width: Math.max(0, parent.width - root.contentPadding * 2)
+                height: Math.max(0, parent.height - root.contentPadding * 2 - root.connectorHeight)
                 contentHeight: root.activeClient && root.activeClient.contentItem ? root.activeClient.contentItem.implicitHeight : 0
                 clip: true
                 interactive: root.expanded && !contentTransition.running
@@ -284,7 +287,7 @@ Item {
                 boundsBehavior: Flickable.StopAtBounds
                 Item {
                     id: incomingPage
-                    width: root.targetWidth - 24
+                    width: root.targetWidth - root.contentPadding * 2
                     height: scroll.contentHeight
                 }
                 Item {

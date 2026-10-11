@@ -21,7 +21,7 @@ Column {
             Rectangle {
                 anchors.fill: parent
                 radius: 7
-                color: previousMonth.containsMouse ? Theme.surface0 : "transparent"
+                color: previousMonth.pressed ? Qt.darker(Theme.mantle, 1.2) : previousMonth.containsMouse ? Qt.lighter(Theme.base, 1.15) : "transparent"
             }
             Text {
                 anchors.centerIn: parent
@@ -57,7 +57,7 @@ Column {
             Rectangle {
                 anchors.fill: parent
                 radius: 7
-                color: nextMonth.containsMouse ? Theme.surface0 : "transparent"
+                color: nextMonth.pressed ? Qt.darker(Theme.mantle, 1.2) : nextMonth.containsMouse ? Qt.lighter(Theme.base, 1.15) : "transparent"
             }
             Text {
                 anchors.centerIn: parent

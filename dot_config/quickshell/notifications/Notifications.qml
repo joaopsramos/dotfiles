@@ -56,8 +56,8 @@ Scope {
             id: window
             required property var modelData
             screen: modelData
-            readonly property var entries: root.service ? root.service.entries.filter(entry => entry.screenName === modelData.name) : []
-            visible: entries.length > 0 && !root.historyScreens.includes(modelData.name)
+            readonly property var entries: root.service ? root.service.entries.filter(entry => entry.screenName === modelData.name && !entry.popupSuppressed) : []
+            visible: entries.length > 0 && !root.service.notificationsDisabled && !root.historyScreens.includes(modelData.name)
             color: "transparent"
             anchors {
                 top: true
@@ -76,7 +76,7 @@ Scope {
             // Resizing the native window every frame makes dismissal stutter.
             implicitHeight: modelData.height - 64
             exclusionMode: ExclusionMode.Ignore
-            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.layer: WlrLayer.Top
             WlrLayershell.namespace: "quickshell-notifications"
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
             mask: Region {

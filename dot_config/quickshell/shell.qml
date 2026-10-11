@@ -6,10 +6,14 @@ import qs.bar
 import qs.notifications
 import qs.session
 import qs.overlays
+import qs.downloads
+import qs.pomodoro
 
 Scope {
     Bar {}
     Notifications {}
     PowerMenu {}
     Overlays {}
+    Downloads {}
+    Pomodoro {}
 }

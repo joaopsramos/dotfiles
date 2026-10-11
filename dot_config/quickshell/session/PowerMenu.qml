@@ -11,6 +11,7 @@ Scope {
     id: root
     property bool opened: false
     property bool cornerMode: false
+    readonly property int edgeMargin: 10
     property bool cornerPointerInside: true
     property real expansion: opened ? 1 : 0
     Behavior on expansion {
@@ -40,7 +41,7 @@ Scope {
         if (!opened || !cornerMode)
             return
         cornerPointerInside = position.x >= 0 && position.y >= 0
-            && position.x < reveal.fullWidth && position.y < menu.height
+            && position.x < edgeMargin + reveal.fullWidth && position.y < edgeMargin + menu.height
         if (cornerPointerInside || menu.confirming)
             hoverCloseDelay.stop()
         else if (!hoverCloseDelay.running)
@@ -199,16 +200,15 @@ Scope {
         }
         Item {
             id: reveal
-            readonly property real fullWidth: Math.min(420, window.width)
-            x: root.cornerMode ? 0 : (window.width - fullWidth) / 2
-            y: root.cornerMode ? 0 : (window.height - menu.height) / 2
+            readonly property real fullWidth: Math.min(420, Math.max(0, window.width - root.edgeMargin * 2))
+            x: root.cornerMode ? root.edgeMargin * root.expansion : (window.width - fullWidth) / 2
+            y: root.cornerMode ? root.edgeMargin * root.expansion : (window.height - menu.height) / 2
             width: root.cornerMode ? fullWidth * root.expansion : fullWidth
             height: root.cornerMode ? menu.height * root.expansion : menu.height
             clip: root.cornerMode
             PowerMenuPanel {
                 id: menu
                 width: reveal.fullWidth
-                edgeAttached: root.cornerMode
                 hostname: root.hostname
                 uptime: root.uptime
                 // The corner menu closes by clipping back into the edge,

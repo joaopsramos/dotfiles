@@ -10,11 +10,20 @@ Scope {
     id: root
     property list<NotificationEntry> entries: []
     property alias history: historyStorage.records
+    property alias notificationsDisabled: historyStorage.notificationsDisabled
+    onNotificationsDisabledChanged: {
+        if (notificationsDisabled) {
+            for (const entry of entries)
+                entry.popupSuppressed = true
+            dismissAll()
+        }
+    }
 
     PersistentProperties {
         id: historyStorage
         reloadableId: "notification-history"
         property var records: []
+        property bool notificationsDisabled: false
     }
 
     function remember(entry) {
@@ -56,10 +65,14 @@ Scope {
             const screen = Hyprland.focusedMonitor?.name || Quickshell.screens[0]?.name || ""
             const entry = entryComponent.createObject(root, {
                 notification,
-                screenName: screen
+                screenName: screen,
+                popupSuppressed: root.notificationsDisabled
             })
             root.remember(entry)
             root.entries = [entry, ...root.entries]
+            // Wait until the server finishes registering the tracked notification.
+            if (entry.popupSuppressed)
+                Qt.callLater(() => entry.dismiss())
         }
     }
 
