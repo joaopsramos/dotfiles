@@ -2,252 +2,208 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Quickshell.Services.Notifications
 import qs
 
-Item {
+Rectangle {
     id: root
-    required property NotificationEntry entry
+    required property var record
+    signal remove
+    signal activate
     signal dismissAll
-    property bool appeared: false
-    property real retainedHeight: 0
-    // Keep the complete card intact while sliding out, including its border.
-    // Closing also removes native actions, which must not resize the card.
-    implicitHeight: entry.closed ? retainedHeight : card.implicitHeight
+    property bool interactive: false
+    property var actions: []
+    property real progress: -1
+    readonly property real receivedTime: new Date(root.record.receivedAt).getTime()
+    property bool recent: receivedTime + 60000 > Date.now()
+    readonly property string timeLabel: recent ? "now" : Qt.formatDateTime(new Date(receivedTime), "HH:mm")
+    function refreshTimestamp() {
+        timestampExpiry.stop()
+        const remaining = receivedTime + 60000 - Date.now()
+        recent = remaining > 0
+        if (recent && visible) {
+            timestampExpiry.interval = Math.max(1, Math.ceil(remaining))
+            timestampExpiry.start()
+        }
+    }
+    onReceivedTimeChanged: Qt.callLater(refreshTimestamp)
+    onVisibleChanged: Qt.callLater(refreshTimestamp)
+    Component.onCompleted: Qt.callLater(refreshTimestamp)
+    Timer {
+        id: timestampExpiry
+        onTriggered: root.refreshTimestamp()
+    }
+    implicitHeight: content.implicitHeight + 24
     height: implicitHeight
-    onImplicitHeightChanged: {
-        if (!entry.closed)
-            retainedHeight = implicitHeight
-    }
-    opacity: appeared && !entry.closed ? 1 : 0
-    clip: true
-    Component.onCompleted: {
-        retainedHeight = implicitHeight
-        appeared = true
-    }
-    Behavior on opacity {
-        NumberAnimation {
-            duration: root.entry.closed ? 140 : 180
+    radius: Theme.radius
+    color: Theme.mantle
+    border.width: 1
+    border.color: Theme.surface0
+
+    MouseArea {
+        anchors.fill: parent
+        enabled: root.interactive
+        cursorShape: root.interactive ? Qt.PointingHandCursor : Qt.ArrowCursor
+        acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
+        onClicked: event => {
+            if (event.button === Qt.RightButton) root.dismissAll()
+            else if (event.button === Qt.MiddleButton) root.remove()
+            else root.activate()
         }
     }
-
-    function iconSource(value) {
-        if (!value)
-            return ""
-        if (value.startsWith("/") || value.includes(":/"))
-            return value.startsWith("/") ? "file://" + value : value
-        return Quickshell.iconPath(value, true)
-    }
-
-    Rectangle {
-        id: card
-        x: root.appeared && !root.entry.closed ? 0 : root.width
-        width: root.width
-        implicitHeight: content.implicitHeight + 24
-        height: root.height
-        radius: Theme.radius
-        color: Theme.base
-        border.width: Theme.borderWidth
-        border.color: root.entry.critical ? Theme.red : Theme.surface1
-        Behavior on x {
-            NumberAnimation {
-                duration: root.entry.closed ? 140 : 200
-                easing.type: Easing.OutCubic
-            }
-        }
-
-        HoverHandler {
-            onHoveredChanged: root.entry.hovered = hovered
-        }
-        MouseArea {
-            cursorShape: Qt.PointingHandCursor
-            anchors.fill: parent
-            acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton
-            onClicked: event => {
-                if (event.button === Qt.RightButton)
-                    root.dismissAll()
-                else if (event.button === Qt.MiddleButton)
-                    root.entry.dismiss()
-                else
-                    root.entry.activate()
-            }
-        }
-
-        Column {
-            id: content
-            x: 12
-            y: 12
-            width: parent.width - 24
-            spacing: Theme.spacing
-
-            Row {
-                width: parent.width
-                spacing: 10
-                Rectangle {
-                    width: 34
-                    height: 34
-                    radius: 8
-                    color: Theme.surface0
-                    Image {
-                        id: icon
-                        anchors.centerIn: parent
-                        width: 24
-                        height: 24
-                        source: root.iconSource(root.entry.appIcon)
-                        sourceSize: Qt.size(32, 32)
-                        fillMode: Image.PreserveAspectFit
-                        visible: status === Image.Ready
-                    }
-                    Text {
-                        anchors.centerIn: parent
-                        visible: !icon.visible
-                        text: "󰂚"
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 20
-                        color: root.entry.critical ? Theme.red : Theme.blue
-                    }
-                }
-                Column {
-                    width: parent.width - 34 - 10
-                    spacing: 4
-                    Row {
-                        width: parent.width
-                        height: 20
-                        spacing: Theme.spacing
-                        Text {
-                            width: parent.width - timestamp.width - closeButton.width - 16
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: root.entry.appName
-                            textFormat: Text.PlainText
-                            color: Theme.subtext0
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.smallFontSize
-                            elide: Text.ElideRight
-                        }
-                        Text {
-                            id: timestamp
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: Qt.formatDateTime(root.entry.receivedAt, "HH:mm")
-                            color: Theme.overlay1
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.smallFontSize
-                        }
-                        FontMetrics {
-                            id: timestampMetrics
-                            font: timestamp.font
-                        }
-                        Rectangle {
-                            id: closeButton
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 20
-                            height: 20
-                            radius: 6
-                            color: closeMouse.containsMouse ? Theme.surface1 : "transparent"
-                            Item {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                y: timestamp.y - closeButton.y + timestamp.baselineOffset + timestampMetrics.tightBoundingRect(timestamp.text).y + timestampMetrics.tightBoundingRect(timestamp.text).height / 2 - height / 2
-                                width: 10
-                                height: 10
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    width: 10
-                                    height: 1.2
-                                    radius: 0.6
-                                    rotation: 45
-                                    color: Theme.subtext0
-                                }
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    width: 10
-                                    height: 1.2
-                                    radius: 0.6
-                                    rotation: -45
-                                    color: Theme.subtext0
-                                }
-                            }
-                            MouseArea {
-                                id: closeMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.entry.dismiss()
-                            }
-                        }
-                    }
-                    Text {
-                        width: parent.width
-                        text: root.entry.summary
-                        visible: text.length > 0
-                        textFormat: Text.PlainText
-                        color: Theme.text
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.fontSize
-                        font.bold: true
-                        wrapMode: Text.Wrap
-                    }
+    Column {
+        id: content
+        x: 10
+        y: 12
+        width: parent.width - 22
+        spacing: Theme.spacing
+        Row {
+            width: parent.width
+            height: 22
+            spacing: 6
+            Image {
+                id: icon
+                width: 24
+                height: 24
+                y: appName.y + appName.height / 2 - height / 2
+                source: !root.record.appIcon ? "" : root.record.appIcon.startsWith("/") ? "file://" + root.record.appIcon : root.record.appIcon.includes(":/") ? root.record.appIcon : Quickshell.iconPath(root.record.appIcon, true)
+                sourceSize: Qt.size(24, 24)
+                fillMode: Image.PreserveAspectFit
+                Text {
+                    anchors.centerIn: parent
+                    visible: icon.status !== Image.Ready
+                    text: root.record.critical ? "" : ""
+                    color: root.record.critical ? Theme.red : root.record.low ? Theme.green : Theme.blue
+                    font.family: Theme.fontFamily
+                    font.pixelSize: root.record.critical ? 20 : 22
                 }
             }
             Text {
-                width: parent.width
-                visible: text.length > 0
-                text: root.entry.body
-                textFormat: Text.StyledText
-                color: Theme.text
-                linkColor: Theme.blue
+                id: appName
+                anchors.top: parent.top
+                width: Math.min(implicitWidth, Math.max(0, parent.width + 5 - icon.width - time.width - close.width - parent.spacing * 4))
+                text: root.record.appName
+                textFormat: Text.PlainText
+                elide: Text.ElideRight
+                color: Theme.subtext0
                 font.family: Theme.fontFamily
-                font.pixelSize: Theme.bodyFontSize
-                wrapMode: Text.Wrap
-                onLinkActivated: link => Qt.openUrlExternally(link)
+                font.pixelSize: Theme.smallFontSize
+            }
+            Text {
+                id: time
+                anchors.top: parent.top
+                text: "· " + root.timeLabel
+                color: Theme.subtext0
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.smallFontSize
+            }
+            Item {
+                width: Math.max(0, parent.width + 5 - icon.width - appName.width - time.width - close.width - parent.spacing * 4)
+                height: 1
             }
             Rectangle {
-                width: parent.width
-                height: 5
-                radius: 2.5
-                visible: root.entry.progress >= 0
-                color: Theme.surface0
-                Rectangle {
-                    width: parent.width * root.entry.progress / 100
-                    height: parent.height
-                    radius: parent.radius
-                    color: Theme.blue
-                    Behavior on width {
-                        NumberAnimation {
-                            duration: 150
-                        }
+                id: close
+                width: 20
+                height: 20
+                y: -5
+                radius: 5
+                color: closeMouse.containsMouse ? Theme.surface1 : Theme.transparent
+                Item {
+                    anchors.centerIn: parent
+                    width: 10
+                    height: 10
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: 10
+                        height: 1.2
+                        rotation: 45
+                        color: Theme.subtext0
+                    }
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: 10
+                        height: 1.2
+                        rotation: -45
+                        color: Theme.subtext0
                     }
                 }
+                MouseArea {
+                    id: closeMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.remove()
+                }
             }
-            Flow {
-                width: parent.width
-                spacing: 6
-                visible: childrenRect.height > 0
-                Repeater {
-                    model: root.entry.actions.filter(action => action.identifier !== "default")
-                    Rectangle {
-                        id: actionButton
-                        required property NotificationAction modelData
-                        width: Math.min(actionText.implicitWidth + 20, content.width)
-                        height: 30
-                        radius: 6
-                        color: actionMouse.containsMouse ? Theme.surface1 : Theme.surface0
-                        Text {
-                            id: actionText
-                            anchors.centerIn: parent
-                            width: Math.min(implicitWidth, content.width - 20)
-                            text: actionButton.modelData.text
-                            textFormat: Text.PlainText
-                            elide: Text.ElideRight
-                            color: Theme.blue
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.bodyFontSize
-                        }
-                        MouseArea {
-                            id: actionMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: actionButton.modelData.invoke()
-                        }
+        }
+        Text {
+            x: 2
+            width: parent.width - 2
+            text: root.record.summary
+            visible: text.length > 0
+            textFormat: Text.PlainText
+            color: Theme.text
+            wrapMode: Text.Wrap
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.fontSize
+            font.bold: true
+        }
+        Text {
+            x: 2
+            width: parent.width - 2
+            text: root.record.body
+            visible: text.length > 0
+            textFormat: Text.StyledText
+            color: Theme.subtext1
+            linkColor: Theme.blue
+            wrapMode: Text.Wrap
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.bodyFontSize
+            onLinkActivated: link => Qt.openUrlExternally(link)
+        }
+        Rectangle {
+            width: parent.width
+            height: 5
+            radius: 2.5
+            visible: root.progress >= 0
+            color: Theme.surface0
+            Rectangle {
+                width: parent.width * root.progress / 100
+                height: parent.height
+                radius: parent.radius
+                color: Theme.blue
+                Behavior on width { NumberAnimation { duration: 150 } }
+            }
+        }
+        Flow {
+            width: parent.width
+            spacing: 6
+            visible: childrenRect.height > 0
+            Repeater {
+                model: root.actions.filter(action => action.identifier !== "default")
+                Rectangle {
+                    id: actionButton
+                    required property var modelData
+                    width: Math.min(actionText.implicitWidth + 20, content.width)
+                    height: 30
+                    radius: 6
+                    color: actionMouse.containsMouse ? Theme.surface1 : Theme.surface0
+                    Text {
+                        id: actionText
+                        anchors.centerIn: parent
+                        width: Math.min(implicitWidth, content.width - 20)
+                        text: actionButton.modelData.text
+                        textFormat: Text.PlainText
+                        elide: Text.ElideRight
+                        color: Theme.blue
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.bodyFontSize
+                    }
+                    MouseArea {
+                        id: actionMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: actionButton.modelData.invoke()
                     }
                 }
             }

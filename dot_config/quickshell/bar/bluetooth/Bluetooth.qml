@@ -39,7 +39,7 @@ Item {
         anchors.centerIn: parent
         horizontalPadding: Theme.moduleHorizontalPadding
         verticalPadding: Theme.moduleVerticalPadding
-        moduleColor: root.popupVisible ? "transparent" : Theme.base
+        moduleColor: root.popupVisible ? Theme.transparent : Theme.base
         mouseEnabled: true
         onClicked: hover.open()
         BarText {

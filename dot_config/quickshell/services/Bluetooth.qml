@@ -3,16 +3,33 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Quickshell.Bluetooth as Native
 
 Singleton {
     id: root
-    property var state: ({
-            adapter: "",
-            name: "Bluetooth",
-            enabled: false,
-            devices: []
-        })
-    property bool ready: false
+    property var bluetoothSource: Native.Bluetooth
+    readonly property var state: {
+        const adapters = bluetoothSource.adapters.values
+        const adapter = adapters.find(item => item.enabled) || adapters[0]
+        const devices = adapter ? adapter.devices.values.map(device => ({
+            path: device.dbusPath,
+            address: device.address,
+            name: device.name || device.deviceName || device.address || "Unknown device",
+            icon: device.icon,
+            connected: device.connected,
+            paired: device.paired || device.bonded,
+            battery: device.batteryAvailable ? Math.round(device.battery * 100) : null
+        })) : []
+        devices.sort((a, b) => Number(b.connected) - Number(a.connected)
+            || Number(b.paired) - Number(a.paired) || a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+        return {
+            adapter: adapter?.dbusPath || "",
+            name: adapter?.name || "Bluetooth",
+            enabled: adapter?.enabled || false,
+            devices
+        }
+    }
+    readonly property bool ready: true
     property string error: ""
     property var viewers: []
     property var currentRequest: []
@@ -22,18 +39,11 @@ Singleton {
     readonly property bool scanning: scan.running || pendingActions.some(args => args[0] === "scan")
 
     function setViewer(viewer, opened) {
-        const wasActive = viewers.length > 0
         viewers = viewers.filter(item => item !== viewer)
         if (opened) {
             viewers = [...viewers, viewer]
-            if (!wasActive)
-                refresh()
         } else if (viewers.length === 0)
             error = ""
-    }
-    function refresh() {
-        if (!request.running && currentRequest.length === 0 && pendingActions.length === 0)
-            startRequest(["status"])
     }
     function runAction(arguments) {
         if (arguments[0] === "scan" && scanning)
@@ -66,10 +76,8 @@ Singleton {
                 try {
                     const response = JSON.parse(text)
                     if (response.ok) {
-                        root.state = response.data
-                        root.ready = true
                         root.error = ""
-                        if (root.action[0] === "power" && root.action[1] === "true" && root.state.enabled)
+                        if (root.action[0] === "power" && root.action[1] === "true" && response.data.enabled)
                             root.runAction(["scan"])
                     } else
                         root.error = response.error
@@ -96,8 +104,6 @@ Singleton {
                 try {
                     const response = JSON.parse(text)
                     if (response.ok) {
-                        root.state = response.data
-                        root.ready = true
                         root.error = ""
                     } else
                         root.error = response.error
@@ -107,17 +113,6 @@ Singleton {
                 }
             }
         }
-        // qmllint disable signal-handler-parameters
-        onExited: () => {
-            root.refresh()
-        }
-        // qmllint enable signal-handler-parameters
-    }
-    Timer {
-        interval: root.viewers.length > 0 ? 2000 : 15000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: root.refresh()
+
     }
 }

@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Shapes
 import qs
 import qs.components
 
@@ -138,6 +137,7 @@ Item {
 
         Column {
             width: parent.width
+            visible: root.networkReady && !!root.network.device
             spacing: 0
             TabBar {
                 id: connectionTabs
@@ -169,7 +169,7 @@ Item {
                             verticalAlignment: Text.AlignVCenter
                         }
                         background: Rectangle {
-                            color: tab.checked ? Theme.mantle : "transparent"
+                            color: tab.checked ? Theme.mantle : Theme.transparent
                             topLeftRadius: 6
                             topRightRadius: 6
                         }
@@ -220,7 +220,7 @@ Item {
                                     width: parent.width - 40
                                     height: parent.height
                                     radius: 7
-                                    color: entry.modelData.active ? Theme.surface0 : entry.expanded || entryMouse.containsMouse ? Theme.surface0 : "transparent"
+                                    color: entry.modelData.active ? Theme.surface0 : entry.expanded || entryMouse.containsMouse ? Theme.surface0 : Theme.transparent
                                 }
                                 opacity: connecting ? 0.55 : 1
                                 Behavior on opacity {
@@ -253,7 +253,7 @@ Item {
                                     anchors.right: parent.right
                                     anchors.rightMargin: 49
                                     y: (48 - height) / 2
-                                    text: entry.modelData.active ? "✔" : "Connect"
+                                    text: entry.modelData.active ? "" : "Connect"
                                     color: entry.modelData.active ? Theme.green : Theme.mauve
                                     font.family: Theme.fontFamily
                                     font.pixelSize: entry.modelData.active ? 18 : Theme.smallFontSize
@@ -363,22 +363,13 @@ Item {
                                     height: 32
                                     radius: 6
                                     visible: !!entry.modelData.uuid
-                                    color: forgetMouse.containsMouse ? Theme.surface0 : "transparent"
-                                    Shape {
+                                    color: forgetMouse.containsMouse ? Theme.surface0 : Theme.transparent
+                                    Text {
                                         anchors.centerIn: parent
-                                        width: 16
-                                        height: 18
-                                        preferredRendererType: Shape.CurveRenderer
-                                        ShapePath {
-                                            fillColor: "transparent"
-                                            strokeColor: Theme.text
-                                            strokeWidth: 1.4
-                                            capStyle: ShapePath.RoundCap
-                                            joinStyle: ShapePath.RoundJoin
-                                            PathSvg {
-                                                path: "M 2 4.5 L 14 4.5 M 5.5 4.5 L 5.5 2 L 10.5 2 L 10.5 4.5 M 3.5 6.5 L 4.2 15.5 Q 4.3 16.5 5.3 16.5 L 10.7 16.5 Q 11.7 16.5 11.8 15.5 L 12.5 6.5 M 6.5 8 L 6.5 13.5 M 9.5 8 L 9.5 13.5"
-                                            }
-                                        }
+                                        text: ""
+                                        color: Theme.text
+                                        font.family: Theme.fontFamily
+                                        font.pixelSize: 18
                                     }
                                     MouseArea {
                                         id: forgetMouse
@@ -464,11 +455,13 @@ Item {
         }
 
         Row {
+            anchors.right: parent.right
             spacing: 6
             ThemedButton {
                 horizontalAlignment: Text.AlignLeft
                 textFormat: Text.PlainText
                 text: "Scan"
+                visible: root.networkReady && !!root.network.device
                 loading: root.scanning
                 enabled: root.network.enabled && root.network.device !== "" && !root.scanning
                 onClicked: root.action(["scan", root.network.device])
@@ -477,6 +470,7 @@ Item {
                 horizontalAlignment: Text.AlignLeft
                 textFormat: Text.PlainText
                 text: "Disconnect"
+                visible: root.networkReady && !!root.network.device
                 enabled: root.network.current.kind !== "down"
                 onClicked: root.action(["disconnect", root.network.current.device])
             }

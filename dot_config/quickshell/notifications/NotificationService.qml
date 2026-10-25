@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Quickshell.Hyprland
 import Quickshell.Services.Notifications
 
 Scope {
@@ -37,6 +36,7 @@ Scope {
             appName: entry.appName,
             appIcon: entry.appIcon,
             critical: entry.critical,
+            low: entry.low,
             receivedAt: Qt.formatDateTime(entry.receivedAt, "yyyy-MM-ddTHH:mm:ss")
         }
         history = [record, ...history.filter(item => item.id !== record.id)].slice(0, 100)
@@ -62,10 +62,8 @@ Scope {
         imageSupported: false
         onNotification: notification => {
             notification.tracked = true
-            const screen = Hyprland.focusedMonitor?.name || Quickshell.screens[0]?.name || ""
             const entry = entryComponent.createObject(root, {
                 notification,
-                screenName: screen,
                 popupSuppressed: root.notificationsDisabled
             })
             root.remember(entry)

@@ -227,7 +227,7 @@ hl.config({
 
 		follow_mouse = 1,
 
-		sensitivity = 0.1, -- -1.0 - 1.0, 0 means no modification.
+		sensitivity = -0.1, -- -1.0 - 1.0, 0 means no modification.
 
 		touchpad = {
 			natural_scroll = true,
@@ -268,6 +268,7 @@ hl.bind(mainMod .. " + E", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle", mode = "maximized" }))
 hl.bind(mainMod .. " + CTRL + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd('err=$(voxtype record toggle 2>&1) || notify-send "voxtype error" "$err"'))
+hl.bind(mainMod .. " + CTRL + R", hl.dsp.exec_cmd("~/.config/hypr/scripts/record-toggle.sh"))
 hl.bind(mainMod .. " + T", hl.dsp.window.pseudo())
 
 hl.bind(
@@ -358,11 +359,11 @@ hl.workspace_rule({ workspace = "8", monitor = "DP-1" })
 hl.workspace_rule({ workspace = "9", monitor = "DP-1" })
 hl.workspace_rule({ workspace = "0", monitor = "DP-1" })
 
-hl.workspace_rule({ workspace = "1", monitor = "eDP-1", default = true })
-hl.workspace_rule({ workspace = "2", monitor = "eDP-1" })
-hl.workspace_rule({ workspace = "3", monitor = "eDP-1" })
-hl.workspace_rule({ workspace = "4", monitor = "eDP-1" })
-hl.workspace_rule({ workspace = "5", monitor = "eDP-1" })
+-- hl.workspace_rule({ workspace = "1", monitor = "eDP-1", default = true })
+-- hl.workspace_rule({ workspace = "2", monitor = "eDP-1" })
+-- hl.workspace_rule({ workspace = "3", monitor = "eDP-1" })
+-- hl.workspace_rule({ workspace = "4", monitor = "eDP-1" })
+-- hl.workspace_rule({ workspace = "5", monitor = "eDP-1" })
 
 -- Example window rules that are useful
 

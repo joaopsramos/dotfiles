@@ -10,8 +10,8 @@ import qs.downloads
 import qs.pomodoro
 
 Scope {
-    Bar {}
-    Notifications {}
+    Bar { notifications: notifications }
+    Notifications { id: notifications }
     PowerMenu {}
     Overlays {}
     Downloads {}

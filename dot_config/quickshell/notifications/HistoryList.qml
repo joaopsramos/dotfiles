@@ -20,7 +20,7 @@ ListView {
         values: root.records
         objectProp: "id"
     }
-    delegate: HistoryCard {
+    delegate: NotificationCard {
         required property var modelData
         record: modelData
         width: root.width

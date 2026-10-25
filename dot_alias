@@ -1,5 +1,5 @@
 alias nv="nvim"
-alias nvide="neovide </dev/null >/dev/null 2>&1 & disown; exit"
+alias nvide="raf neovide; exit"
 alias cfgnv="cd ~/.config/nvim && nvim"
 
 alias pacs="sudo pacman -S"

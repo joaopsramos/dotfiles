@@ -20,6 +20,7 @@ Item {
     })
 
     property var parentWindow
+    property var notifications: null
     readonly property var stats: Services.Status.stats
 
     implicitWidth: modules.implicitWidth
@@ -111,6 +112,12 @@ Item {
             }
         }
 
+        NotificationBell {
+            anchors.verticalCenter: parent.verticalCenter
+            parentWindow: root.parentWindow
+            controller: root.notifications
+        }
+
         BluetoothWidgets.Bluetooth {
             anchors.verticalCenter: parent.verticalCenter
             parentWindow: root.parentWindow
@@ -122,5 +129,7 @@ Item {
             parentWindow: root.parentWindow
             fallback: root.stats.network
         }
+
+
     }
 }

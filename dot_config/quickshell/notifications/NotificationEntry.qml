@@ -5,7 +5,6 @@ import Quickshell.Services.Notifications
 Scope {
     id: root
     required property Notification notification
-    required property string screenName
     readonly property date receivedAt: new Date()
     property bool hovered: false
     property bool closed: false
@@ -19,6 +18,7 @@ Scope {
     property string appName: ""
     property string appIcon: ""
     property bool critical: false
+    property bool low: false
     property real progress: -1
     property real remaining: 0
     property real deadline: 0
@@ -33,6 +33,7 @@ Scope {
         appName = notification.appName || "Notification"
         appIcon = notification.appIcon || ""
         critical = notification.urgency === NotificationUrgency.Critical
+        low = notification.urgency === NotificationUrgency.Low
         progress = notification.hints.value === undefined ? -1 : Math.max(0, Math.min(100, Number(notification.hints.value)))
         remaining = critical || notification.expireTimeout === 0 ? 0 : notification.expireTimeout < 0 ? 10000 : notification.expireTimeout
         scheduleExpiry()

@@ -1,9 +1,14 @@
+pragma ComponentBehavior: Bound
+
 import Quickshell
 import QtQuick
 import qs
 import qs.privacy
+import "media" as MediaWidgets
 
 Scope {
+    property var notifications: null
+    id: root
     Variants {
         model: Quickshell.screens
 
@@ -16,7 +21,7 @@ Scope {
             required property var modelData
             screen: modelData
 
-            color: "transparent"
+            color: Theme.transparent
 
             BarPopup {
                 id: popupHost
@@ -48,13 +53,19 @@ Scope {
 
                 Workspaces {
                     id: workspaces
+                    screen: panelWindow.screen
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
-                Spotify {
+                WorkModeButton {
+                    id: workMode
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                MediaWidgets.Spotify {
                     parentWindow: panelWindow
                     anchors.verticalCenter: parent.verticalCenter
-                    maximumWidth: Math.max(0, clock.x - workspaces.width - leftModules.spacing - 8 - (micUsage.visible ? micUsage.width + leftModules.spacing : 0) - (cameraUsage.visible ? cameraUsage.width + leftModules.spacing : 0) - (screenSharingUsage.visible ? screenSharingUsage.width + leftModules.spacing : 0))
+                    maximumWidth: Math.max(0, clock.x - workspaces.width - workMode.width - leftModules.spacing * 2 - 8 - (micUsage.visible ? micUsage.width + leftModules.spacing : 0) - (cameraUsage.visible ? cameraUsage.width + leftModules.spacing : 0) - (screenSharingUsage.visible ? screenSharingUsage.width + leftModules.spacing : 0))
                 }
 
                 MicUsage {
@@ -81,6 +92,7 @@ Scope {
 
             StatusModules {
                 id: statusModules
+                notifications: root.notifications
                 parentWindow: panelWindow
                 anchors {
                     right: parent.right

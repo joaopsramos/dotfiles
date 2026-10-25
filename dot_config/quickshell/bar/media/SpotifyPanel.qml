@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Shapes
 import QtQuick.Effects
 import Quickshell.Services.Mpris
 import qs
@@ -11,6 +10,7 @@ Column {
     id: root
     property var player: null
     property bool active: false
+    readonly property real preferredWidth: 178 + 18 + playbackControls.implicitWidth
     property real playbackPosition: 0
     readonly property real duration: player && player.lengthSupported ? Math.max(0, player.length) : 0
     spacing: 14
@@ -45,32 +45,11 @@ Column {
 
     Row {
         width: parent.width
-        spacing: Theme.spacing
-        Text {
-            text: "󰓇"
-            color: Theme.green
-            font.family: Theme.fontFamily
-            font.pixelSize: 17
-        }
-        Text {
-            text: "Spotify"
-            color: Theme.subtext0
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.bodyFontSize
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
-    Row {
-        width: parent.width
         spacing: 18
         Item {
-            width: 144
-            height: 144
-            Rectangle {
-                anchors.fill: parent
-                radius: 72
-                color: Qt.alpha(Theme.green, 0.08)
-            }
+            width: 178
+            height: 178
+            anchors.verticalCenter: parent.verticalCenter
             Canvas {
                 id: coverMask
                 anchors.fill: parent
@@ -83,7 +62,7 @@ Column {
                     ctx.beginPath()
                     for (let i = 0; i <= 360; i++) {
                         const angle = i * Math.PI / 180
-                        const radius = 66 + 4 * Math.cos(9 * angle)
+                        const radius = 83 + 4 * Math.cos(9 * angle)
                         const x = width / 2 + radius * Math.cos(angle)
                         const y = height / 2 + radius * Math.sin(angle)
                         if (i === 0)
@@ -113,7 +92,7 @@ Column {
                     text: "󰓇"
                     font.family: Theme.fontFamily
                     font.pixelSize: 52
-                    color: Theme.green
+                    color: Theme.blue
                     visible: artwork.status !== Image.Ready
                 }
                 Image {
@@ -121,14 +100,15 @@ Column {
                     anchors.fill: parent
                     source: root.player ? root.player.trackArtUrl : ""
                     asynchronous: true
-                    sourceSize: Qt.size(288, 288)
+                    sourceSize: Qt.size(356, 356)
                     fillMode: Image.PreserveAspectCrop
                     visible: status === Image.Ready
                 }
             }
         }
         Column {
-            width: parent.width - 162
+            id: details
+            width: parent.width - 196
             anchors.verticalCenter: parent.verticalCenter
             spacing: Theme.spacing
             Text {
@@ -159,119 +139,129 @@ Column {
                 text: root.player?.trackAlbum || ""
                 textFormat: Text.PlainText
                 elide: Text.ElideRight
-                color: Theme.overlay1
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.smallFontSize
-            }
-        }
-    }
-    Column {
-        width: parent.width
-        spacing: 3
-        Slider {
-            id: progress
-            visible: root.duration > 0 && !!root.player?.positionSupported
-            width: parent.width
-            height: 24
-            from: 0
-            to: Math.max(1, root.duration)
-            property real seekPosition: 0
-            Binding {
-                target: progress
-                property: "value"
-                value: root.playbackPosition
-                when: !progress.pressed
-            }
-            onMoved: seekPosition = value
-            enabled: !!root.player?.canSeek
-            onPressedChanged: {
-                if (pressed)
-                    seekPosition = value
-                else if (root.player?.canSeek) {
-                    root.player.position = seekPosition
-                    root.syncPosition()
-                }
-            }
-            background: Rectangle {
-                x: progress.leftPadding
-                y: (progress.height - height) / 2
-                width: progress.availableWidth
-                height: 4
-                radius: 2
-                color: Theme.surface0
-                Rectangle {
-                    width: progress.visualPosition * parent.width
-                    height: parent.height
-                    radius: 2
-                    color: Theme.green
-                }
-            }
-            handle: Rectangle {
-                x: progress.leftPadding + progress.visualPosition * (progress.availableWidth - width)
-                y: (progress.height - height) / 2
-                width: 12
-                height: 12
-                radius: 6
-                color: progress.pressed ? Theme.text : Theme.green
-            }
-        }
-        Item {
-            width: parent.width
-            height: playbackControls.implicitHeight
-            Text {
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                visible: progress.visible
-                text: root.timeLabel(progress.pressed ? progress.value : root.playbackPosition)
                 color: Theme.subtext0
                 font.family: Theme.fontFamily
-                font.pixelSize: Theme.smallFontSize
+                font.pixelSize: Theme.fontSize
             }
-            Text {
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                visible: progress.visible
-                text: "−" + root.timeLabel(root.duration - (progress.pressed ? progress.value : root.playbackPosition))
-                color: Theme.subtext0
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.smallFontSize
-            }
-            Row {
-                id: playbackControls
-                anchors.centerIn: parent
-                spacing: Theme.spacing
-                PlaybackButton {
-                    text: "󰒟"
-                    highlighted: !!root.player?.shuffle
-                    enabled: !!root.player?.shuffleSupported
-                    onClicked: root.player.shuffle = !root.player.shuffle
-                    hint: "Shuffle"
-                }
-                PlaybackButton {
-                    symbol: "previous"
-                    enabled: !!root.player?.canGoPrevious
-                    onClicked: root.player.previous()
-                }
-                PlaybackButton {
-                    symbol: root.player?.isPlaying ? "pause" : "play"
-                    prominent: true
-                    enabled: !!root.player?.canTogglePlaying
-                    onClicked: root.player.togglePlaying()
-                }
-                PlaybackButton {
-                    symbol: "next"
-                    enabled: !!root.player?.canGoNext
-                    onClicked: root.player.next()
-                }
-                PlaybackButton {
-                    text: root.player?.loopState === MprisLoopState.Track ? "󰑘" : "󰑖"
-                    highlighted: !!root.player && root.player.loopState !== MprisLoopState.None
-                    enabled: !!root.player?.loopSupported
-                    onClicked: {
-                        const current = root.player.loopState
-                        root.player.loopState = current === MprisLoopState.None ? MprisLoopState.Playlist : current === MprisLoopState.Playlist ? MprisLoopState.Track : MprisLoopState.None
+            Item {
+                id: footer
+                width: parent.width
+                implicitHeight: controls.implicitHeight
+                Column {
+                    id: controls
+                    width: parent.width
+                    spacing: 3
+                    Slider {
+                        id: progress
+                        padding: 0
+                        visible: root.duration > 0 && !!root.player?.positionSupported
+                        width: playbackControls.implicitWidth
+                        anchors.left: parent.left
+                        height: 24
+                        from: 0
+                        to: Math.max(1, root.duration)
+                        property real seekPosition: 0
+                        Binding {
+                            target: progress
+                            property: "value"
+                            value: root.playbackPosition
+                            when: !progress.pressed
+                        }
+                        onMoved: seekPosition = value
+                        enabled: !!root.player?.canSeek
+                        onPressedChanged: {
+                            if (pressed)
+                                seekPosition = value
+                            else if (root.player?.canSeek) {
+                                root.player.position = seekPosition
+                                root.syncPosition()
+                            }
+                        }
+                        background: Rectangle {
+                            x: progress.leftPadding
+                            y: (progress.height - height) / 2
+                            width: progress.availableWidth
+                            height: 4
+                            radius: 2
+                            color: Theme.surface0
+                            Rectangle {
+                                width: progress.visualPosition * parent.width
+                                height: parent.height
+                                radius: 2
+                                color: Theme.blue
+                            }
+                        }
+                        handle: Rectangle {
+                            x: progress.leftPadding + progress.visualPosition * (progress.availableWidth - width)
+                            y: (progress.height - height) / 2
+                            width: 12
+                            height: 12
+                            radius: 6
+                            color: progress.pressed ? Theme.text : Theme.blue
+                        }
                     }
-                    hint: root.player?.loopState === MprisLoopState.Track ? "Repeat track" : root.player?.loopState === MprisLoopState.Playlist ? "Repeat playlist" : "Repeat off"
+                    Item {
+                        width: progress.width
+                        anchors.left: parent.left
+                        height: 16
+                        visible: progress.visible
+                        Text {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: progress.visible
+                            text: root.timeLabel(progress.pressed ? progress.value : root.playbackPosition)
+                            color: Theme.subtext0
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.smallFontSize
+                        }
+                        Text {
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: progress.visible
+                            text: "−" + root.timeLabel(root.duration - (progress.pressed ? progress.value : root.playbackPosition))
+                            color: Theme.subtext0
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.smallFontSize
+                        }
+                    }
+                    Row {
+                        id: playbackControls
+                        anchors.left: parent.left
+                        spacing: 6
+                        PlaybackButton {
+                            text: "󰒟"
+                            highlighted: !!root.player?.shuffle
+                            enabled: !!root.player?.shuffleSupported
+                            onClicked: root.player.shuffle = !root.player.shuffle
+                            hint: "Shuffle"
+                        }
+                        PlaybackButton {
+                            symbol: "previous"
+                            enabled: !!root.player?.canGoPrevious
+                            onClicked: root.player.previous()
+                        }
+                        PlaybackButton {
+                            symbol: root.player?.isPlaying ? "pause" : "play"
+                            prominent: true
+                            enabled: !!root.player?.canTogglePlaying
+                            onClicked: root.player.togglePlaying()
+                        }
+                        PlaybackButton {
+                            symbol: "next"
+                            enabled: !!root.player?.canGoNext
+                            onClicked: root.player.next()
+                        }
+                        PlaybackButton {
+                            text: root.player?.loopState === MprisLoopState.Track ? "󰑘" : "󰑖"
+                            highlighted: !!root.player && root.player.loopState !== MprisLoopState.None
+                            enabled: !!root.player?.loopSupported
+                            onClicked: {
+                                const current = root.player.loopState
+                                root.player.loopState = current === MprisLoopState.None ? MprisLoopState.Playlist : current === MprisLoopState.Playlist ? MprisLoopState.Track : MprisLoopState.None
+                            }
+                            hint: root.player?.loopState === MprisLoopState.Track ? "Repeat track" : root.player?.loopState === MprisLoopState.Playlist ? "Repeat playlist" : "Repeat off"
+                        }
+                    }
                 }
             }
         }
@@ -284,6 +274,7 @@ Column {
             cursorShape: Qt.PointingHandCursor
         }
         property bool prominent: false
+        readonly property color playbackColor: Theme.blue
         property string symbol: ""
         property string hint: ""
         padding: 0
@@ -310,41 +301,24 @@ Column {
                 border.color: Theme.surface1
             }
         }
-        implicitWidth: prominent ? 46 : 42
-        implicitHeight: 46
+        implicitWidth: prominent ? 46 : 36
+        implicitHeight: prominent ? 46 : 36
+        anchors.verticalCenter: parent.verticalCenter
         opacity: enabled ? 1 : 0.35
-        contentItem: Item {
-            Text {
-                anchors.fill: parent
-                visible: button.symbol === ""
-                transform: Translate {
-                    x: -2
-                }
-                text: button.text
-                color: button.highlighted ? Theme.green : Theme.text
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.barFontSize
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
+        contentItem: Text {
+            transform: Translate {
+                x: button.symbol === "" ? -1 : 0
             }
-            Shape {
-                anchors.centerIn: parent
-                width: 18
-                height: 18
-                visible: button.symbol !== ""
-                preferredRendererType: Shape.CurveRenderer
-                ShapePath {
-                    strokeWidth: -1
-                    fillColor: button.prominent ? Theme.base : Theme.text
-                    PathSvg {
-                        path: button.symbol === "previous" ? "M 2 3 H 4 V 15 H 2 Z M 16 3 L 5 9 L 16 15 Z" : button.symbol === "next" ? "M 14 3 H 16 V 15 H 14 Z M 2 3 L 13 9 L 2 15 Z" : button.symbol === "pause" ? "M 3 3 H 7 V 15 H 3 Z M 11 3 H 15 V 15 H 11 Z" : "M 5 2 L 16 9 L 5 16 Z"
-                    }
-                }
-            }
+            text: button.symbol === "previous" ? "󰒮" : button.symbol === "next" ? "󰒭" : button.symbol === "pause" ? "" : button.symbol === "play" ? "" : button.text
+            color: button.prominent ? Theme.base : button.highlighted ? Theme.blue : Theme.text
+            font.family: Theme.fontFamily
+            font.pixelSize: button.prominent ? 22 : button.symbol !== "" ? 28 : Theme.barFontSize
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
         background: Rectangle {
             radius: height / 2
-            color: button.prominent ? (button.hovered ? Qt.lighter(Theme.green, 1.1) : Theme.green) : button.hovered ? Theme.surface0 : button.highlighted ? Qt.alpha(Theme.green, 0.12) : "transparent"
+            color: button.prominent ? (button.hovered ? Qt.lighter(button.playbackColor, 1.1) : button.playbackColor) : button.hovered ? Theme.surface0 : button.highlighted ? Qt.alpha(Theme.blue, 0.12) : Theme.transparent
             border.width: 0
         }
     }

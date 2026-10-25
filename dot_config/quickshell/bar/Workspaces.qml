@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import Quickshell
 import Quickshell.Hyprland
 import qs
 
@@ -9,17 +10,11 @@ BarModuleWrapper {
     verticalPadding: 4
     mouseEnabled: true
 
-    property int persistentWorkspaceCount: 5
-
-    function maxVisibleWorkspaceId() {
-        let maxId = 0
-
-        if (Hyprland.workspaces.values.length > 0) {
-            maxId = Math.max(...Hyprland.workspaces.values.map(w => w.id))
-        }
-
-        return Math.max(maxId, persistentWorkspaceCount)
-    }
+    property var screen: null
+    readonly property bool multipleScreens: Quickshell.screens.length > 1
+    readonly property int firstWorkspaceId: multipleScreens && root.screen?.name !== "HDMI-A-1" ? 6 : 1
+    readonly property int workspaceCount: multipleScreens ? 5 : 10
+    visible: workspaceCount > 0
 
     readonly property var workspaceById: {
         const result = {}
@@ -65,13 +60,13 @@ BarModuleWrapper {
         spacing: 0
 
         Repeater {
-            model: root.maxVisibleWorkspaceId()
+            model: root.workspaceCount
 
             Item {
                 id: dot
                 required property int index
 
-                property int workspaceId: index + 1
+                property int workspaceId: root.firstWorkspaceId + index
                 property var workspace: root.getWorkspace(workspaceId)
                 property bool isFocused: Hyprland.focusedWorkspace?.id === workspaceId
                 property bool hasWindows: workspace?.toplevels.values.length > 0

@@ -125,7 +125,7 @@ Column {
                         width: 28
                         leftPadding: 0; rightPadding: 0
                         text: "×"
-                        backgroundColor: hovered ? Theme.surface0 : "transparent"
+                        backgroundColor: hovered ? Theme.surface0 : Theme.transparent
                         onClicked: root.dismissFile(row.modelData.path, row.modelData.revision, row.modelData.arrived)
                     }
                 }

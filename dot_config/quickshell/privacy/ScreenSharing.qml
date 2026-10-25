@@ -1,9 +1,33 @@
 pragma Singleton
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Pipewire
 
 Singleton {
     id: root
+    property bool localRecording: false
+
+    function stopRecording() {
+        if (localRecording && !stopProcess.running)
+            stopProcess.running = true
+    }
+
+    Process {
+        id: stopProcess
+        // Stop only: never invoke the toggle script, which could start a recording.
+        command: ["bash", "-c", "[[ -n ${XDG_RUNTIME_DIR:-} ]] || exit 0; read -r recording_pid < \"$XDG_RUNTIME_DIR/hypr-recording/pid\" || exit 0; [[ $recording_pid =~ ^[1-9][0-9]*$ && $recording_pid -gt 1 ]] || exit 0; recording_comm=$(ps -p \"$recording_pid\" -o comm= 2>/dev/null) || exit 0; [[ $recording_comm == wf-recorder ]] || exit 0; kill -INT -- \"$recording_pid\""]
+    }
+
+    IpcHandler {
+        target: "recording"
+        function started(): void {
+            root.localRecording = true
+        }
+        function stopped(): void {
+            root.localRecording = false
+        }
+    }
+
     readonly property var videoNodes: Pipewire.nodes.values.filter(node =>
         node.type === PwNodeType.VideoSource || node.type === PwNodeType.VideoSink
         || (node.properties["media.class"] || "").includes("/Video"))

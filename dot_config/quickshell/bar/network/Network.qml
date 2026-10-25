@@ -89,7 +89,7 @@ Item {
     NetworkIcon {
         id: icon
         anchors.centerIn: parent
-        kind: root.kind
+        kind: root.kind === "unknown" ? "ethernet" : root.kind
         signalStrength: root.fallback.signal ?? -1
         color: root.kind === "down" ? Theme.red : root.kind === "unknown" ? Theme.overlay1 : Theme.network
     }

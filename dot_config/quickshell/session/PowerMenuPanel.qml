@@ -15,31 +15,26 @@ FocusScope {
         {
             label: "Lock",
             icon: "󰌾",
-            detail: "Secure your session",
             accent: Theme.blue
         },
         {
             label: "Suspend",
             icon: "󰤄",
-            detail: "Put the computer to sleep",
             accent: Theme.mauve
         },
         {
             label: "Logout",
             icon: "󰍃",
-            detail: "End your current session",
             accent: Theme.yellow
         },
         {
             label: "Reboot",
             icon: "󰜉",
-            detail: "Restart the computer",
             accent: Theme.peach
         },
         {
             label: "Shutdown",
             icon: "󰐥",
-            detail: "Turn off the computer",
             accent: Theme.red
         }
     ]
@@ -180,22 +175,13 @@ FocusScope {
                             font.pixelSize: 23
                             horizontalAlignment: Text.AlignHCenter
                         }
-                        Column {
+                        Text {
                             width: actionButton.availableWidth - 42
                             anchors.verticalCenter: parent.verticalCenter
-                            spacing: 3
-                            Text {
-                                text: actionButton.modelData.label
-                                color: Theme.text
-                                font.family: Theme.fontFamily
-                                font.pixelSize: Theme.fontSize
-                            }
-                            Text {
-                                text: actionButton.modelData.detail
-                                color: Theme.subtext0
-                                font.family: Theme.fontFamily
-                                font.pixelSize: Theme.captionFontSize
-                            }
+                            text: actionButton.modelData.label
+                            color: Theme.text
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.fontSize
                         }
 
                     }
@@ -203,7 +189,7 @@ FocusScope {
                         radius: 10
                         color: root.selected === actionButton.index ? Qt.alpha(actionButton.modelData.accent, 0.10) : Theme.mantle
                         border.width: 1
-                        border.color: root.selected === actionButton.index ? Qt.alpha(actionButton.modelData.accent, 0.55) : "transparent"
+                        border.color: root.selected === actionButton.index ? Qt.alpha(actionButton.modelData.accent, 0.55) : Theme.transparent
                     }
                 }
             }

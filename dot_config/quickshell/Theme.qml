@@ -76,7 +76,7 @@ QtObject {
     readonly property int barFontSize: 16
 
     // ===== Timing =====
-    readonly property int popupOpenDelay: 150
+    readonly property int popupOpenDelay: 200
     readonly property int popupCloseDelay: 300
     readonly property int fastAnimation: 140
     readonly property int normalAnimation: 220

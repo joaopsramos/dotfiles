@@ -78,6 +78,18 @@ Column {
         font.family: Theme.fontFamily
         font.pixelSize: Theme.smallFontSize
     }
+    Rectangle {
+        width: parent.width
+        height: outputDevices.implicitHeight + 8
+        visible: root.outputs.length > 0
+        radius: Theme.radius
+        color: Theme.mantle
+        Column {
+            id: outputDevices
+            x: 4
+            y: 4
+            width: parent.width - 8
+            spacing: 4
     Repeater {
         model: ScriptModel {
             values: root.outputs
@@ -85,10 +97,12 @@ Column {
         }
         delegate: DeviceRow {
             required property var modelData
-            width: root.width
+            width: outputDevices.width
             node: modelData
             selected: root.sink === modelData
             onClicked: Pipewire.preferredDefaultAudioSink = modelData
+        }
+    }
         }
     }
     Text {
@@ -109,10 +123,29 @@ Column {
         label: "Microphone"
         accent: Theme.sapphire
     }
-    Column {
+    Rectangle {
         width: parent.width
-        spacing: 4
-        visible: root.inputs.length > 1
+        height: 1
+        color: Theme.surface0
+    }
+    Text {
+        text: "Input device"
+        color: Theme.subtext0
+        font.family: Theme.fontFamily
+        font.pixelSize: Theme.smallFontSize
+    }
+    Rectangle {
+        width: parent.width
+        height: inputDevices.implicitHeight + 8
+        visible: root.inputs.length > 0
+        radius: Theme.radius
+        color: Theme.mantle
+        Column {
+            id: inputDevices
+            x: 4
+            y: 4
+            width: parent.width - 8
+            spacing: 4
         Repeater {
             model: ScriptModel {
                 values: root.inputs
@@ -120,14 +153,17 @@ Column {
             }
             delegate: DeviceRow {
                 required property var modelData
-                width: root.width
+                width: inputDevices.width
                 node: modelData
                 selected: root.source === modelData
                 onClicked: Pipewire.preferredDefaultAudioSource = modelData
             }
         }
     }
+        }
     ThemedButton {
+        anchors.right: parent.right
+        horizontalAlignment: Text.AlignLeft
         text: "Audio settings"
         onClicked: root.settings()
     }
@@ -139,7 +175,7 @@ Column {
         signal clicked
         height: 38
         radius: 7
-        color: selected ? Theme.surface0 : mouse.containsMouse ? Theme.mantle : "transparent"
+        color: selected ? Theme.surface0 : mouse.containsMouse ? Theme.surface1 : Theme.transparent
         Text {
             x: 9
             anchors.verticalCenter: parent.verticalCenter
@@ -155,10 +191,10 @@ Column {
             anchors.right: parent.right
             anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            text: device.selected ? "✓" : ""
+            text: device.selected ? "" : ""
             color: Theme.green
             font.family: Theme.fontFamily
-            font.pixelSize: Theme.bodyFontSize
+            font.pixelSize: 18
         }
         MouseArea {
             id: mouse

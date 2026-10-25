@@ -26,7 +26,7 @@ Item {
         anchors.fill: parent
         preferredRendererType: Shape.CurveRenderer
         ShapePath {
-            fillColor: "transparent"
+            fillColor: Theme.transparent
             strokeColor: Theme.surface0
             strokeWidth: 7
             capStyle: ShapePath.RoundCap
@@ -40,7 +40,7 @@ Item {
             }
         }
         ShapePath {
-            fillColor: "transparent"
+            fillColor: Theme.transparent
             strokeColor: root.gaugeColor
             strokeWidth: 7
             capStyle: ShapePath.RoundCap

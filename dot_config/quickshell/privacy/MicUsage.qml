@@ -5,5 +5,9 @@ PrivacyIndicator {
     readonly property bool muted: source?.audio?.muted ?? false
     activeApplications: Services.Audio.activeApplications
     icon: muted ? "" : ""
-    tooltipTitle: "Microphone in use"
+    clickable: !!source?.audio
+    onClicked: {
+        if (source?.audio)
+            source.audio.muted = !source.audio.muted
+    }
 }

@@ -26,7 +26,7 @@ Singleton {
     PwObjectTracker { objects: root.videoNodes }
     PwObjectTracker { objects: root.linkGroups }
     RestartingStream {
-        command: ["python3", "-u", Quickshell.shellPath("privacy/camera.py")]
+        command: ["python3", "-B", "-u", Quickshell.shellPath("privacy/camera.py")]
         onRead: data => {
             try {
                 root.directApplications = JSON.parse(data)

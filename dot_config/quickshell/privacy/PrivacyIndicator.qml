@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import qs
 import qs.bar
 
@@ -8,8 +7,8 @@ Item {
 
     property var activeApplications: []
     property string icon: ""
-    property string tooltipTitle: ""
-    readonly property string applications: activeApplications.join("\n")
+    property bool clickable: false
+    signal clicked()
     property real reveal: activeApplications.length > 0 ? 1 : 0
 
     Behavior on reveal {
@@ -44,10 +43,8 @@ Item {
     MouseArea {
         anchors.fill: parent
         enabled: root.activeApplications.length > 0
-        hoverEnabled: true
-        cursorShape: Qt.ArrowCursor
-        ToolTip.visible: containsMouse && root.activeApplications.length > 0
-        ToolTip.text: root.tooltipTitle + ":\n" + root.applications
-        ToolTip.delay: 500
+        cursorShape: root.clickable ? Qt.PointingHandCursor : Qt.ArrowCursor
+        acceptedButtons: root.clickable ? Qt.LeftButton : Qt.NoButton
+        onClicked: root.clicked()
     }
 }

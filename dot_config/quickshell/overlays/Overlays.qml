@@ -73,7 +73,7 @@ Scope {
         id: window
         screen: root.targetScreen
         visible: card.opacity > 0
-        color: "transparent"
+        color: Theme.transparent
         anchors.bottom: true
         // The installed qmltypes omit the Margins value type.
         // qmllint disable unqualified unresolved-type missing-property

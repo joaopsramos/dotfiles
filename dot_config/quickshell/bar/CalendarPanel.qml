@@ -21,7 +21,7 @@ Column {
             Rectangle {
                 anchors.fill: parent
                 radius: 7
-                color: previousMonth.pressed ? Qt.darker(Theme.mantle, 1.2) : previousMonth.containsMouse ? Qt.lighter(Theme.base, 1.15) : "transparent"
+                color: previousMonth.pressed ? Qt.darker(Theme.mantle, 1.2) : previousMonth.containsMouse ? Qt.lighter(Theme.base, 1.15) : Theme.transparent
             }
             Text {
                 anchors.centerIn: parent
@@ -57,7 +57,7 @@ Column {
             Rectangle {
                 anchors.fill: parent
                 radius: 7
-                color: nextMonth.pressed ? Qt.darker(Theme.mantle, 1.2) : nextMonth.containsMouse ? Qt.lighter(Theme.base, 1.15) : "transparent"
+                color: nextMonth.pressed ? Qt.darker(Theme.mantle, 1.2) : nextMonth.containsMouse ? Qt.lighter(Theme.base, 1.15) : Theme.transparent
             }
             Text {
                 anchors.centerIn: parent
@@ -114,7 +114,7 @@ Column {
                 width: (parent.width - 12) / 7
                 height: 28
                 radius: 6
-                color: isToday ? Theme.mauve : "transparent"
+                color: isToday ? Theme.mauve : Theme.transparent
 
                 Text {
                     anchors.centerIn: parent

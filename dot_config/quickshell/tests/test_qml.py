@@ -67,6 +67,30 @@ Scope {
     property bool sawBluetoothError: false
     property int streamStarts: 0
     property int streamStops: 0
+    QtObject {
+        id: fakeDevice
+        property string dbusPath: "/device/a"
+        property string address: "AA:BB"
+        property string name: "Device A"
+        property string deviceName: "Device A"
+        property string icon: "audio-card"
+        property bool paired: true
+        property bool bonded: false
+        property bool connected: false
+        property bool batteryAvailable: true
+        property real battery: 0.5
+    }
+    QtObject {
+        id: fakeAdapter
+        property string dbusPath: "/adapter"
+        property string name: "Test adapter"
+        property bool enabled: true
+        property QtObject devices: QtObject { property var values: [fakeDevice] }
+    }
+    QtObject {
+        id: fakeBluetooth
+        property QtObject adapters: QtObject { property var values: [fakeAdapter] }
+    }
 
     function check(condition, message) {
         if (!condition) failures = [...failures, message]
@@ -84,6 +108,17 @@ Scope {
             description: name, audio: { volume: 0.5, muted: false } }
     }
     DownloadsWidgets.Downloads { id: downloads }
+    QtObject {
+        id: liveRecord
+        readonly property date receivedAt: new Date(Date.now() - 59500)
+        property string appName: "Test"
+        property string appIcon: ""
+        property string summary: "Timestamp expiry"
+        property string body: ""
+        property bool critical: false
+        property bool low: false
+    }
+    Notifications.NotificationCard { id: timedCard; width: 340; record: liveRecord }
     AudioWidgets.AudioPanel { id: audio; width: 340 }
     BluetoothWidgets.BluetoothPanel { id: bluetooth; width: 340 }
     Notifications.HistoryList {
@@ -105,6 +140,7 @@ Scope {
         }
     }
     Component.onCompleted: {
+        check(timedCard.timeLabel === "now", "Fresh popup timestamp did not show now")
         const first = {path: "/Downloads/first.txt", revision: "unchanged", arrived: 100}
         const second = {path: "/Downloads/second.txt", revision: "unchanged", arrived: 100}
         downloads.entries = [first, second]
@@ -115,12 +151,12 @@ Scope {
                              Object.assign({}, second, {arrived: 200})]
         check(downloads.visibleEntries.length === 2, "Restored download retained an earlier dismissal")
         Services.Audio.playbackNodes = [node(1, "First app")]
-        Services.Bluetooth.refresh()
+        Services.Bluetooth.bluetoothSource = fakeBluetooth
         Services.Bluetooth.runAction(["pair", "/device/a"])
         Services.Bluetooth.runAction(["connect", "/device/a"])
         Services.Bluetooth.runAction(["disconnect", "/device/a"])
         check(Services.Bluetooth.busy, "Queued Bluetooth actions were not busy")
-        check(Services.Bluetooth.pendingActions.length === 3, "Bluetooth action queue lost an entry")
+        check(Services.Bluetooth.pendingActions.length === 2, "Bluetooth action queue lost an entry")
         history.records = Array.from({ length: 100 }, (_, i) => ({
             id: i + 1, appName: "Test", summary: "Notification " + i,
             body: "Message ".repeat(i % 5), appIcon: "", critical: false,
@@ -136,11 +172,11 @@ Scope {
             root.check(root.audioRow !== null, "Audio delegate was not created")
             root.check(root.bluetoothRow !== null, "Bluetooth delegate was not created")
             Services.Audio.playbackNodes = [root.node(1, "Renamed app"), root.node(2, "Second app")]
-            Services.Bluetooth.state = { adapter: "/adapter", name: "Test adapter", enabled: true,
-                devices: [
-                    { path: "/device/a", name: "Renamed device", icon: "audio-card", paired: true, connected: false },
-                    { path: "/device/b", name: "New device", icon: "input-mouse", paired: false, connected: false }
-                ] }
+            fakeDevice.name = "Renamed device"
+            fakeDevice.battery = 0.75
+            fakeDevice.connected = true
+            fakeAdapter.devices.values = [fakeDevice,
+                { dbusPath: "/device/b", address: "CC:DD", name: "New device", icon: "input-mouse", paired: false, bonded: false, connected: false, batteryAvailable: false }]
             Qt.callLater(() => {
                 root.check(root.audioRow === root.find(audio, item => item.showIcon === true && item.node?.id === 1),
                     "Audio delegate was recreated during a model update")
@@ -148,6 +184,12 @@ Scope {
                 root.check(root.bluetoothRow === root.find(bluetooth, item => item.device?.path === "/device/a"),
                     "Bluetooth delegate was recreated during a snapshot update")
                 root.check(root.bluetoothRow?.device.name === "Renamed device", "Bluetooth row data was not refreshed")
+                root.check(Services.Bluetooth.state.devices[0].battery === 75, "Bluetooth battery event was not applied")
+                root.check(Services.Bluetooth.state.devices[0].connected, "Bluetooth connection event was not applied")
+                fakeAdapter.enabled = false
+                root.check(!Services.Bluetooth.state.enabled, "Bluetooth power event was not applied")
+                fakeBluetooth.adapters.values = []
+                root.check(Services.Bluetooth.state.adapter === "", "Removed adapter stayed visible")
             })
             history.forceLayout()
             const cards = history.contentItem.children.filter(item => item.record !== undefined)
@@ -160,6 +202,7 @@ Scope {
         interval: 1800
         running: true
         onTriggered: {
+            root.check(timedCard.timeLabel !== "now", "Popup timestamp stayed at now past one minute")
             root.check(root.sawBluetoothError, "Failed Bluetooth action did not report its error")
             root.check(Services.Bluetooth.error === "", "Successful Bluetooth action left a stale error")
             root.check(!Services.Bluetooth.busy && Services.Bluetooth.pendingActions.length === 0,
@@ -185,7 +228,7 @@ class WidgetTests(unittest.TestCase):
     def test_queue_recovery_row_identity_and_virtual_history(self):
         with tempfile.TemporaryDirectory(prefix='quickshell-widgets-') as directory:
             root = Path(directory)
-            for dirname in ('services', 'bar', 'notifications', 'downloads'):
+            for dirname in ('services', 'bar', 'notifications', 'downloads', 'components', 'privacy'):
                 for source in (ROOT / dirname).rglob('*.qml'):
                     target = root / source.relative_to(ROOT)
                     target.parent.mkdir(parents=True, exist_ok=True)
@@ -218,7 +261,7 @@ class WidgetTests(unittest.TestCase):
             calls = [json.loads(line) for line in
                      (root / 'bluetooth-calls.jsonl').read_text().splitlines()]
             self.assertEqual(calls, [
-                ['status'], ['pair', '/device/a'], ['connect', '/device/a'],
+                ['pair', '/device/a'], ['connect', '/device/a'],
                 ['disconnect', '/device/a'],
             ])
 

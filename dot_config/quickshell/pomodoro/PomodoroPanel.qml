@@ -12,7 +12,7 @@ Column {
         { phase: "short", label: "Short break" },
         { phase: "long", label: "Long break" }
     ]
-    readonly property color accent: timer.phase === "focus" ? Theme.mauve : timer.phase === "long" ? Theme.blue : Theme.green
+    readonly property color accent: timer.phase === "focus" ? Theme.mauve : timer.phase === "long" ? Theme.red : Theme.green
     spacing: 14
 
     Text {
@@ -119,7 +119,7 @@ Column {
                 delegate: Row {
                     id: durationRow
                     required property var modelData
-                    readonly property color accent: modelData.phase === "focus" ? Theme.mauve : modelData.phase === "long" ? Theme.blue : Theme.green
+                    readonly property color accent: modelData.phase === "focus" ? Theme.mauve : modelData.phase === "long" ? Theme.red : Theme.green
                     width: root.width
                     spacing: 8
                     Text {

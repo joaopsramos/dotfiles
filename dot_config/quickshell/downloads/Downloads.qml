@@ -88,7 +88,7 @@ Scope {
             anchors { right: true; bottom: true }
             implicitWidth: Math.min(404, modelData.width)
             implicitHeight: Math.min(440, modelData.height)
-            color: "transparent"
+            color: Theme.transparent
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.namespace: "quickshell-downloads"
@@ -102,7 +102,8 @@ Scope {
                 id: edge
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                width: 6; height: 40
+                // A bottom-edge target stays reachable at a shared monitor seam.
+                width: 96; height: 12
                 HoverHandler {
                     id: edgeHover
                     onHoveredChanged: {

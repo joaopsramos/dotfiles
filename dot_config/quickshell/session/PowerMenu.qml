@@ -117,7 +117,7 @@ Scope {
             required property var modelData
             screen: modelData
             visible: !root.opened && !closeDelay.running
-            color: "transparent"
+            color: Theme.transparent
             anchors {
                 top: true
                 left: true
@@ -156,7 +156,7 @@ Scope {
         id: window
         screen: root.targetScreen
         visible: root.opened || closeDelay.running
-        color: "transparent"
+        color: Theme.transparent
         anchors {
             top: true
             bottom: true

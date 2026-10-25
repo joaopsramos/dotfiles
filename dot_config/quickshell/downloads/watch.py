@@ -8,11 +8,13 @@ from pathlib import Path
 import re
 import select
 import struct
+import subprocess
 import sys
 import time
 
 RECENT_SECONDS = 24 * 60 * 60
 MAX_ENTRIES = 20
+SLOW_SCAN_SECONDS = 0.5
 
 CREATE, DELETE, MOVED_FROM, MOVED_TO = 0x100, 0x200, 0x40, 0x80
 CLOSE_WRITE, DELETE_SELF, MOVE_SELF = 0x8, 0x400, 0x800
@@ -99,6 +101,26 @@ def recent(directory, arrivals):
     return recent_records(directory, arrivals)[:MAX_ENTRIES]
 
 
+class ScanMonitor:
+    def scan(self, directory, arrivals, notify=True):
+        started = time.perf_counter()
+        records = recent_records(directory, arrivals)
+        finished = time.perf_counter()
+        elapsed = finished - started
+        if notify and elapsed > SLOW_SCAN_SECONDS:
+            try:
+                subprocess.run([
+                    "notify-send", "--app-name=Downloads", "--urgency=critical",
+                    "Downloads scan is slow",
+                    f"Scanning and sorting {directory} took {elapsed * 1000:.1f} ms (limit: 500 ms).",
+                ], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, timeout=2, check=True)
+            except (OSError, subprocess.TimeoutExpired, subprocess.CalledProcessError) as error:
+                if isinstance(error, subprocess.CalledProcessError):
+                    error = error.stderr.strip() or str(error)
+                print("Could not send Downloads performance notification: " + str(error), file=sys.stderr)
+        return records
+
+
 def watch(directory):
     libc = ctypes.CDLL(None, use_errno=True)
     libc.inotify_init1.argtypes = [ctypes.c_int]
@@ -112,10 +134,11 @@ def watch(directory):
         raise OSError(ctypes.get_errno(), "Could not watch Downloads")
     cache = arrival_cache(directory)
     arrival_times = load_arrivals(cache)
-    known = {record["path"]: record["revision"] for record in recent_records(directory, arrival_times)}
+    monitor = ScanMonitor()
+    known = {record["path"]: record["revision"] for record in monitor.scan(directory, arrival_times, notify=False)}
 
-    def emit(arrived=None):
-        tracked = recent_records(directory, arrival_times)
+    def emit(arrived=None, notify=True):
+        tracked = monitor.scan(directory, arrival_times, notify=notify)
         present = {record["path"] for record in tracked}
         for path in list(known):
             if path not in present:
@@ -125,7 +148,7 @@ def watch(directory):
         print(json.dumps({"directory": str(directory), "folderUrl": directory.as_uri(),
                           "entries": records, "arrived": arrived}), flush=True)
 
-    emit()
+    emit(notify=False)
     try:
         while True:
             select.select([fd], [], [])

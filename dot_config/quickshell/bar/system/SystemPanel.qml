@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import qs
-import qs.components
+import qs.components as Components
 
 Column {
     id: root
@@ -62,7 +62,7 @@ Column {
             height: 174
             radius: Theme.radius
             color: Theme.mantle
-            UsageGauge {
+            Components.UsageGauge {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 4
                 value: root.gpu.temperature ?? 0
@@ -90,7 +90,7 @@ Column {
             height: 174
             radius: Theme.radius
             color: Theme.mantle
-            UsageGauge {
+            Components.UsageGauge {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 4
                 value: root.cpu.usage ?? root.cpuFallback ?? 0
@@ -112,7 +112,7 @@ Column {
             height: 174
             radius: Theme.radius
             color: Theme.mantle
-            UsageGauge {
+            Components.UsageGauge {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 4
                 value: root.memory.usage ?? root.memoryFallback ?? 0

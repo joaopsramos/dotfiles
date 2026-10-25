@@ -44,7 +44,7 @@ Item {
         BarModuleWrapper {
             horizontalPadding: Theme.moduleHorizontalPadding
             verticalPadding: Theme.moduleVerticalPadding
-            moduleColor: root.popupVisible ? "transparent" : Theme.base
+            moduleColor: root.popupVisible ? Theme.transparent : Theme.base
             mouseEnabled: true
             onClicked: root.openPopup()
             tooltipText: Services.Status.error || Services.Status.errors.cpu || ""
@@ -56,7 +56,7 @@ Item {
         BarModuleWrapper {
             horizontalPadding: Theme.moduleHorizontalPadding
             verticalPadding: Theme.moduleVerticalPadding
-            moduleColor: root.popupVisible ? "transparent" : Theme.base
+            moduleColor: root.popupVisible ? Theme.transparent : Theme.base
             mouseEnabled: true
             onClicked: root.openPopup()
             tooltipText: Services.Status.error || Services.Status.errors.memory || ""

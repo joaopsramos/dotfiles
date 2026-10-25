@@ -48,7 +48,7 @@ Scope {
             anchors.top: true
             implicitWidth: Math.min(380, modelData.width)
             implicitHeight: Math.min(560, modelData.height)
-            color: "transparent"
+            color: Theme.transparent
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.namespace: "quickshell-pomodoro"
@@ -97,7 +97,7 @@ Scope {
                         width: parent.width * controller.progress
                         height: parent.height
                         radius: 3
-                        color: controller.phase === "focus" ? Theme.mauve : controller.phase === "long" ? Theme.blue : Theme.green
+                        color: controller.phase === "focus" ? Theme.mauve : controller.phase === "long" ? Theme.red : Theme.green
                         Behavior on width { NumberAnimation { duration: Theme.fastAnimation } }
                     }
                 }
@@ -110,7 +110,7 @@ Scope {
                 }
                 MouseArea {
                     anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape: Qt.ArrowCursor
                     onClicked: root.openedScreen = window.modelData.name
                 }
                 Timer {
